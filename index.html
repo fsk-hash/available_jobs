@@ -140,8 +140,9 @@
         .apply-btn {
             background-color: #25d366;
             color: white;
-            text-decoration: none;
-            padding: 6px 12px;
+            border: none;
+            cursor: pointer;
+            padding: 8px 12px;
             border-radius: 6px;
             font-weight: bold;
             font-size: 13px;
@@ -151,6 +152,7 @@
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
             width: 100%;
             justify-content: center;
+            font-family: 'Noto Sans Arabic', sans-serif;
         }
 
         .apply-btn:hover {
@@ -302,8 +304,32 @@
         { designation: "پرنٹنگ مینیجر", department: "گورنمنٹ پریس پاکستان", deadline: "2026-08-13", fee: "600" }
     ];
 
-    // انٹرنیشنل فارمیٹ کے مطابق پاکستان کا کوڈ نمبر کے ساتھ جوڑا گیا ہے
     const whatsappNumber = "923106167300"; 
+
+    // جاب کی معلومات کاپی کرنے اور واٹس ایپ اوپن کرنے کا فنکشن
+    function copyAndApply(id, designation, department, fee) {
+        // جو ٹیکسٹ کاپی ہونا ہے، اس کا فارمیٹ
+        const textToCopy = `السلام علیکم حسین سروسز! مجھے اس نوکری پر اپلائی کروانا ہے:\n\n📌 جاب آئی ڈی: ${id}\n💼 عہدہ: ${designation}\n🏢 محکمہ: ${department}\n💰 فیس: ${fee}`;
+        
+        // جاوا اسکرپٹ کے ذریعے کلپ بورڈ پر کاپی کرنے کا ماڈرن طریقہ
+        navigator.clipboard.writeText(textToCopy).then(() => {
+            alert(`✅ جاب کوڈ اور تفصیلات کاپی ہو گئی ہیں!\n\nاب واٹس ایپ کھلنے پر بس میسج باکس میں "پیسٹ (Paste)" کر کے سینڈ کر دیں۔`);
+            
+            // واٹس ایپ اوپن کرنے کا لنک
+            window.location.href = `https://wa.me/${whatsappNumber}`;
+        }).catch(err => {
+            // اگر کسی پرانے موبائل براؤزر میں آٹو کاپی کام نہ کرے تو یہ متبادل طریقہ چلے گا
+            const textarea = document.createElement("textarea");
+            textarea.value = textToCopy;
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand("copy");
+            document.body.removeChild(textarea);
+            
+            alert(`✅ جاب کوڈ اور تفصیلات کاپی ہو گئی ہیں!\n\nاب واٹس ایپ کھلنے پر بس میسج باکس میں "پیسٹ (Paste)" کر کے سینڈ کر دیں۔`);
+            window.location.href = `https://wa.me/${whatsappNumber}`;
+        });
+    }
 
     function loadJobs() {
         const tableBody = document.getElementById('jobsTableBody');
@@ -311,16 +337,13 @@
 
         jobsData.forEach((job, index) => {
             const jobId = `JOB-${1001 + index}`;
-            const messageText = `مجھے "${jobId}" پر اپلائی کروانا ہے۔`;
-            
-            // یہاں موبائل ایپ ڈیپ لنکنگ (Deep Linking) استعمال کی گئی ہے
-            const whatsappUrl = `whatsapp://send?phone=${whatsappNumber}&text=${encodeURIComponent(messageText)}`;
+            const feeText = job.fee.toLowerCase() === 'free' ? 'Free' : `Rs. ${job.fee}`;
 
             let feeDisplay = '';
             if(job.fee.toLowerCase() === 'free') {
                 feeDisplay = `<span class="free-badge">Free</span>`;
             } else {
-                feeDisplay = `<span class="fee-badge">Rs. ${job.fee}</span>`;
+                feeDisplay = `<span class="fee-badge">${feeText}</span>`;
             }
 
             const row = document.createElement('tr');
@@ -331,9 +354,9 @@
                 <td data-label="آخری تاریخ"><span class="date-badge">${job.deadline}</span></td>
                 <td data-label="Apply Fee">${feeDisplay}</td>
                 <td>
-                    <a href="${whatsappUrl}" class="apply-btn">
+                    <button onclick="copyAndApply('${jobId}', '${job.designation}', '${job.department}', '${feeText}')" class="apply-btn">
                         اپلائی کروائیں 💬
-                    </a>
+                    </button>
                 </td>
             `;
             tableBody.appendChild(row);
