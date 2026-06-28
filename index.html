@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>حسین ای-سروسز - دستیاب جابز (ڈارک موڈ)</title>
+    <title>Jobs List - Hussain E-Services</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400;700&family=Poppins:wght@400;600&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;700&display=swap');
 
         * {
             box-sizing: border-box;
@@ -14,274 +14,356 @@
         }
 
         body {
-            font-family: 'Poppins', 'Noto Nastaliq Urdu', sans-serif;
-            background-color: #121212; /* گہرا کالا بیک گراؤنڈ */
-            color: #e0e0e0; /* ہلکا سفید ٹیکسٹ */
-            padding: 10px;
-            direction: rtl;
+            font-family: 'Noto Sans Arabic', sans-serif;
+            background-color: #1d232f;
+            color: #e0e0e0;
+            padding: 8px;
         }
 
         .container {
-            max-width: 100%;
+            max-width: 1200px;
             margin: 0 auto;
-            background: #1e1e1e; /* کارڈز اور مین کنٹینر کا بیک گراؤنڈ */
-            padding: 15px;
+            background: #1e1e1e;
+            padding: 12px;
             border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
         }
 
-        header {
+        h1 {
             text-align: center;
-            margin-bottom: 20px;
-            border-bottom: 3px solid #3792ff;
-            padding-bottom: 15px;
+            color: #ffffff;
+            margin-bottom: 12px;
+            font-weight: 700;
+            font-size: 20px;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 8px;
+            display: inline-block;
+            width: 100%;
         }
 
-        header h1 {
-            color: #3792ff; /* چمکدار نیلا رنگ جو ڈارک موڈ پر واضح دیکھے */
-            font-size: 2rem;
-            margin-bottom: 5px;
+        .search-container {
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: center;
         }
 
-        header h2 {
-            color: #b0b0b0;
-            font-size: 1.2rem;
-            font-weight: 600;
+        .search-box {
+            width: 100%;
+            max-width: 500px;
+            padding: 8px 15px;
+            font-size: 14px;
+            font-family: 'Noto Sans Arabic', sans-serif;
+            background-color: #2a2a2a;
+            border: 2px solid #7a80bd;
+            color: #ffffff;
+            border-radius: 30px;
+            outline: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            text-align: center;
         }
 
-        /* ڈیسک ٹاپ ٹیبل ڈیزائن */
+        .search-box:focus {
+            border-color: #3498db;
+        }
+
+        .table-responsive {
+            width: 100%;
+        }
+
         table {
             width: 100%;
             border-collapse: collapse;
+            margin-top: 5px;
             text-align: right;
-            margin-top: 10px;
         }
 
         th, td {
-            padding: 12px 15px;
-            border: 1px solid #333333;
+            padding: 8px 10px;
+            border-bottom: 1px solid #2d3748;
+            font-size: 14px;
+            vertical-align: middle;
         }
 
         th {
-            background-color: #1a73e8;
-            color: white;
-            font-weight: 600;
+            background-color: #1d232f;
+            color: #ffffff;
+            font-weight: 700;
+        }
+
+        tr:nth-child(odd) {
+            background-color: #1d232f;
         }
 
         tr:nth-child(even) {
-            background-color: #252525;
+            background-color: #171c25;
         }
 
-        .btn-apply {
-            background-color: #00c853; /* چمکدار سبز بٹن */
-            color: #000000; /* بٹن کے اندر کالا ٹیکسٹ تاکہ پڑھنے میں آسانی ہو */
-            border: none;
-            padding: 10px 15px;
-            border-radius: 6px;
-            cursor: pointer;
+        tr:hover {
+            background-color: #2d3748;
+        }
+
+        .job-id {
+            font-family: arial;
             font-weight: bold;
+            color: #ffb400;
+            background: #1d232f;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 13px;
+            display: inline-block;
+            direction: ltr;
+        }
+
+        .fee-badge {
+            background: #1a365d;
+            color: #fffc00;
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-weight: bold;
+            font-size: 13px;
+        }
+
+        .free-badge {
+            background: #064e3b;
+            color: #6ee7b7;
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-weight: bold;
+            font-size: 13px;
+        }
+
+        .date-badge {
+            background: #1d232f;
+            color: #ffffff;
+            padding: 2px 8px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            display: inline-block;
+        }
+
+        .copy-btn {
+            background-color: #1a365d;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-weight: bold;
+            font-size: 13px;
+            cursor: pointer;
             width: 100%;
-            font-size: 1rem;
-            transition: background 0.2s, transform 0.1s;
+            font-family: 'Noto Sans Arabic', sans-serif;
+            transition: background 0.2s ease;
         }
 
-        .btn-apply:hover {
-            background-color: #00e676;
-            transform: scale(1.02);
+        .copy-btn:hover {
+            background-color: #2980b9;
         }
 
-        /* 📱 موبائل اسکرین کے لیے ڈارک موڈ کارڈ لے آؤٹ */
+        .no-result {
+            display: none;
+            text-align: center;
+            padding: 20px;
+            color: #a0aec0;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        /* 🔔 نوٹیفکیشن ٹوسٹ میسج */
+        .toast-notification {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-200px);
+            background: #ffffff;
+            color: #1d232f;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            z-index: 2000;
+            transition: transform 1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-align: center;
+            width: 90%;
+            max-width: 400px;
+        }
+
+        .toast-notification.show {
+            transform: translateX(-50%) translateY(0);
+        }
+
+        /* 📱 موبائل کے لیے انتہائی کمپیکٹ ڈیزائن */
         @media screen and (max-width: 768px) {
-            table, thead, tbody, th, td, tr {
-                display: block;
+            table thead {
+                display: none;
             }
 
-            thead tr {
-                position: absolute;
-                top: -9999px;
-                left: -9999px;
+            table, tbody, tr, td {
+                display: block;
+                width: 100%;
             }
 
             tr {
-                background: #252525;
-                border: 2px solid #3792ff; /* نیلے بارڈر کے ساتھ جاب کارڈ */
+                margin-bottom: 8px;
+                border: 1px solid #7a80bd;
                 border-radius: 8px;
-                margin-bottom: 15px;
-                padding: 12px;
-                box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-            }
-
-            tr:nth-child(even) {
-                background-color: #252525;
+                padding: 6px 8px;
+                background: #1e1e1e;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
             }
 
             td {
-                border: none;
-                border-bottom: 1px solid #333;
+                text-align: left;
+                padding-right: 45%;
+                padding-left: 0px;
+                padding-top: 3px;
+                padding-bottom: 3px;
                 position: relative;
-                padding-left: 50%;
-                text-align: left; /* جاب کی معلومات بائیں طرف */
-                padding-top: 10px;
-                padding-bottom: 10px;
-                font-size: 1rem;
-                color: #e0e0e0;
+                border-bottom: 1px dashed #52567e;
+                font-size: 13px;
+                min-height: 28px;
             }
-
-            /* موبائل پر دائیں طرف آنے والے لیبلز */
-            td:before {
-                position: absolute;
-                top: 10px;
-                right: 10px;
-                width: 45%;
-                padding-left: 10px;
-                white-space: nowrap;
-                text-align: right;
-                font-weight: bold;
-                color: #3792ff; /* لیبل کا رنگ نیلا */
-            }
-
-            td:nth-of-type(1):before { content: "Job ID:"; }
-            td:nth-of-type(2):before { content: "Designation:"; }
-            td:nth-of-type(3):before { content: "Department:"; }
-            td:nth-of-type(4):before { content: "Last Date:"; }
-            td:nth-of-type(5):before { content: "Apply Fee:"; }
-            td:nth-of-type(6):before { content: "Action:"; }
 
             td:last-child {
                 border-bottom: none;
-                text-align: center;
+                padding-right: 0;
                 padding-left: 0;
-                padding-top: 15px;
+                padding-top: 0px;
+                text-align: center;
             }
-        }
 
-        /* واٹس ایپ سیکشن (ڈارک تھیم کے مطابق) */
-        .whatsapp-section {
-            text-align: center;
-            margin-top: 30px;
-            padding: 20px;
-            background: #16291a; /* ہلکا گہرا سبز جو ڈارک موڈ پر اچھا لگے */
-            border-radius: 8px;
-            border: 1px solid #2e5c38;
-        }
-
-        .whatsapp-btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            background-color: #25D366;
-            color: white;
-            text-decoration: none;
-            padding: 14px 25px;
-            border-radius: 30px;
-            font-size: 1.1rem;
-            font-weight: bold;
-            margin-top: 15px;
-            width: 100%;
-            max-width: 300px;
-            box-shadow: 0 4px 12px rgba(37, 211, 102, 0.2);
-            transition: background-color 0.2s, transform 0.2s;
-        }
-
-        .whatsapp-btn:hover {
-            background-color: #1ebd54;
-            transform: scale(1.03);
+            td::before {
+                content: attr(data-label);
+                position: absolute;
+                right: 5px;
+                left: auto;
+                width: 40%;
+                text-align: right;
+                font-weight: bold;
+                color: #a0aec0;
+                font-size: 12px;
+            }
         }
     </style>
 </head>
 <body>
 
+<div id="toast" class="toast-notification">آرڈر کاپی ہو چکا ہے! نیچے واٹس ایپ کے بٹن پر کلک کریں اور چیٹ ونڈو کھلنے پر اپنا آرڈر Pasteکر کے E-Services کو بھیج دیں تاکہ آپ کی درخواست پر کام شروع کیا جاسکے۔شکریہ۔</div>
+
 <div class="container">
-    <header>
-        <h1>حسین ای-سروسز</h1>
-        <h2>Available Jobs to Apply</h2>
-    </header>
+    <h1>دستیاب آسامیوں کی فہرست</h1>
 
-    <table>
-        <thead>
-            <tr>
-                <th>Job ID</th>
-                <th>Designation</th>
-                <th>Department</th>
-                <th>Last Date</th>
-                <th>Apply Fee</th>
-                <th>Action</th>
-            </tr>
-        </thead>
-        <tbody id="jobs-table-body">
-            </tbody>
-    </table>
-
-    <div class="whatsapp-section">
-        <p style="font-size: 1.05rem; line-height: 1.8; text-align: justify; color: #b8e2c0;">
-            اپلائی کروانے کے لیے نیچے واٹس ایپ کے بٹن پر کلک کر کے چیٹ ونڈو میں میسج پیسٹ (Paste) کر کے ہمارے نمائندے کو بھیج دیں۔ شکریہ۔
-        </p>
-واٹس ایپ پر رابطہ کریں
-        </a>
+    <div class="search-container">
+        <input type="text" id="searchInput" class="search-box" placeholder="یہاں سرچ کریں (عہدہ، محکمہ، فیس )...">
     </div>
+
+    <div class="table-responsive">
+        <table>
+            <thead>
+                <tr>
+                    <th>Job ID</th>
+                    <th>عہدہ</th>
+                    <th>محکمہ / ادارہ</th>
+                    <th>تعلیم</th>
+                    <th>آخری تاریخ</th>
+                    <th>Apply Fee</th>
+                    <th>اپلائی بٹن</th>
+                </tr>
+            </thead>
+            <tbody id="jobsTableBody">
+            </tbody>
+        </table>
+    </div>
+
+    <div id="noResult" class="no-result">کوئی مماثلت نہیں ملی!</div>
 </div>
 
 <script>
-    // 25 فرضی جابز کا ڈیٹا
     const jobsData = [
-        { id: "HE-001", title: "Data Entry Operator", dept: "Education", date: "10-07-2026", fee: "Rs. 300" },
-        { id: "HE-002", title: "Junior Clerk", dept: "Revenue", date: "12-07-2026", fee: "Rs. 400" },
-        { id: "HE-003", title: "Computer Operator", dept: "Health", date: "15-07-2026", fee: "Rs. 350" },
-        { id: "HE-004", title: "Assistant", dept: "Police", date: "18-07-2026", fee: "Rs. 500" },
-        { id: "HE-005", title: "Sub-Inspector", dept: "Police", date: "20-07-2026", fee: "Rs. 600" },
-        { id: "HE-006", title: "Stenographer", dept: "Courts", date: "22-07-2026", fee: "Rs. 400" },
-        { id: "HE-007", title: "Accountant", dept: "Finance", date: "25-07-2026", fee: "Rs. 500" },
-        { id: "HE-008", title: "Library Assistant", dept: "Higher Education", date: "28-07-2026", fee: "Rs. 300" },
-        { id: "HE-009", title: "Lab Technician", dept: "Health", date: "30-07-2026", fee: "Rs. 450" },
-        { id: "HE-010", title: "Driver", dept: "Rescue 1122", date: "02-08-2026", fee: "Rs. 200" },
-        { id: "HE-011", title: "Security Guard", dept: "WAPDA", date: "05-08-2026", fee: "Rs. 150" },
-        { id: "HE-012", title: "Store Keeper", dept: "Railways", date: "08-08-2026", fee: "Rs. 300" },
-        { id: "HE-013", title: "Naib Qasid", dept: "Irrigation", date: "10-08-2026", fee: "Rs. 100" },
-        { id: "HE-014", title: "Primary School Teacher", dept: "School Education", date: "15-08-2026", fee: "Rs. 450" },
-        { id: "HE-015", title: "Senior Clerk", dept: "Excise & Taxation", date: "18-08-2026", fee: "Rs. 500" },
-        { id: "HE-016", title: "Statistical Assistant", dept: "Bureau of Stats", date: "20-08-2026", fee: "Rs. 400" },
-        { id: "HE-017", title: "IT Technician", dept: "PITB", date: "22-08-2026", fee: "Rs. 500" },
-        { id: "HE-018", title: "Supervisor", dept: "Social Welfare", date: "25-08-2026", fee: "Rs. 350" },
-        { id: "HE-019", title: "Auditor", dept: "Local Government", date: "28-08-2026", fee: "Rs. 600" },
-        { id: "HE-020", title: "Draftsman", dept: "C&W Department", date: "30-08-2026", fee: "Rs. 400" },
-        { id: "HE-021", title: "Gate Keeper", dept: "Forest Department", date: "02-09-2026", fee: "Rs. 150" },
-        { id: "HE-022", title: "Receptionist", dept: "Tourism", date: "05-09-2026", fee: "Rs. 300" },
-        { id: "HE-023", title: "Junior Engineer", dept: "Pesco/Lesco", date: "10-09-2026", fee: "Rs. 700" },
-        { id: "HE-024", title: "Field Assistant", dept: "Agriculture", date: "12-09-2026", fee: "Rs. 250" },
-        { id: "HE-025", title: "Telephone Operator", dept: "PTCL", date: "15-09-2026", fee: "Rs. 300" }
+        { designation: "جونیئر کلرک", department: "محکمہ تعلیم (Education Department)", education: "گریجوایٹ", deadline: "15-07-2026", fee: "300" },
+        { designation: "کمپیوٹر آپریٹر", department: "محکمہ صحت (Health Department)", education: "انٹرمیڈیٹ", deadline: "15-07-2026", fee: "500" },
+        { designation: "سافٹ ویئر ڈویلپر", department: "پنجاب آئی ٹی بورڈ (PITB)", education: "بی ایس سی ایس", deadline: "15-07-2026", fee: "1000" },
+        { designation: "اسسٹنٹ ڈائریکٹر", department: "محکمہ زراعت (Agriculture Department)", education: "ماسٹرز", deadline: "15-07-2026", fee: "600" },
+        { designation: "سیکیورٹی گارڈ", department: "لوکل گورنمنٹ (Local Government)", education: "میٹرک", deadline: "15-07-2026", fee: "100" },
+        { designation: "اکاؤنٹنٹ", department: "محکمہ مال (Revenue Department)", education: "بی کام", deadline: "15-07-2026", fee: "400" },
+        { designation: "ڈیٹا انٹری آپریٹر", department: "پولیس ڈیپارٹمنٹ (Police)", education: "انٹرمیڈیٹ", deadline: "15-07-2026", fee: "300" },
+        { designation: "سب انسپکٹر", department: "پنجاب پولیس (Punjab Police)", education: "گریجوایٹ", deadline: "15-07-2026", fee: "500" },
+        { designation: "لیڈی ہیلتھ وزٹر", department: "پرائمری Health کیئر", education: "ڈپلومہ", deadline: "15-07-2026", fee: "500" },
+        { designation: "سوشل میڈیا مینیجر", department: "محکمہ اطلاعات و ثقافت", education: "گریجوایٹ", deadline: "15-07-2026", fee: "500" },
+        { designation: "ای سروسز آپریٹر", department: "ای سروسز", education: "گریجویٹ", deadline: "کوئی آخری تاریخ نہیں", fee: "Free" },
     ];
 
-    const tableBody = document.getElementById('jobs-table-body');
-    
-    jobsData.forEach(job => {
-        const row = document.createElement('tr');
-        row.innerHTML = `
-            <td><strong>${job.id}</strong></td>
-            <td>${job.title}</td>
-            <td>${job.dept}</td>
-            <td>${job.date}</td>
-            <td>${job.fee}</td>
-            <td><button class="btn-apply" onclick="copyJobDetails('${job.id}', '${job.title}', '${job.dept}', '${job.date}', '${job.fee}')">I Want to Apply</button></td>
-        `;
-        tableBody.appendChild(row);
-    });
+    function loadJobs() {
+        const tableBody = document.getElementById('jobsTableBody');
+        tableBody.innerHTML = '';
 
-    function copyJobDetails(id, title, dept, date, fee) {
-        const detailsText = `السلام علیکم! مجھے اس جاب کے لیے اپلائی کروانا ہے۔:\n\n` +
-                            `📌 جاب آئی ڈی: ${id}\n` +
-                            `💼 عہدہ (Designation): ${title}\n` +
-                            `🏢 محکمہ (Department): ${dept}\n` +
-                            `📅 آخری تاریخ: ${date}\n` +
-                            `💰 اپلائی فیس: ${fee}\n\n` +
-                            `براہ کرم میری درخواست کا پراسیس شروع کریں۔`;
+        jobsData.forEach((job, index) => {
+            const jobId = `ESJ-${1001 + index}`;
+            const feeText = job.fee.toLowerCase() === 'free' ? 'Free' : `Rs. ${job.fee}`;
+            
+            // کاپی ہونے والا ٹیکسٹ فارمیٹ
+            const copyText = `السلام علیکم! مجھے اس جاب پر اپلائی کروانا ہے:\n\n جاب آئی ڈی: ${jobId}\n عہدہ: ${job.designation}\n محکمہ: ${job.department}\n تعلیم: ${job.education || '-'}\n فیس: ${feeText}\n آخری تاریخ: ${job.deadline}`;
 
-        navigator.clipboard.writeText(detailsText).then(() => {
-            alert("آپ کا آرڈر کاپی ہوچکا ہے۔\n\nاپلائی کروانے کے لیے نیچے واٹس ایپ کے بٹن پر کلک کر کے چیٹ ونڈو میں میسج پیسٹ کر کے ہمارے نمائندے کو بھیج دیں۔ شکریہ۔");
-        }).catch(err => {
-            console.error('کاپی کرنے میں خرابی آئی: ', err);
-            alert("ڈیٹا کاپی نہیں ہو سکا۔ آپ مینولی رابطہ کر سکتے ہیں۔");
+            let feeDisplay = job.fee.toLowerCase() === 'free' 
+                ? `<span class="free-badge">Free</span>` 
+                : `<span class="fee-badge">Rs. ${job.fee}</span>`;
+
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td data-label="Job ID"><span class="job-id">${jobId}</span></td>
+                <td data-label="عہدہ"><big><big><strong>${job.designation}</big></big></strong></td>
+                <td data-label="محکمہ / ادارہ">${job.department}</td>
+                <td data-label="تعلیم">${job.education || '-'}</td>
+                <td data-label="آخری تاریخ"><span class="date-badge">${job.deadline}</span></td>
+                <td data-label="پراسیسنگ فیس + چالان فیس">${feeDisplay}</td>
+                <td>
+                    <button type="button" class="copy-btn" onclick="copyJobDetails(\`${copyText.replace(/`/g, '\\`').replace(/\n/g, '\\n')}\`)">
+                        جاب اپلائی کروائیں
+                    </button>
+                </td>
+            `;
+            tableBody.appendChild(row);
         });
     }
+
+    // کاپی کرنے اور نوٹیفکیشن دکھانے کا فنکشن
+    function copyJobDetails(text) {
+        navigator.clipboard.writeText(text).then(() => {
+            const toast = document.getElementById('toast');
+            toast.classList.add('show');
+            
+            // 5 سیکنڈ بعد نوٹیفکیشن غائب ہو جائے گا
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 5000);
+        }).catch(err => {
+            alert('تفصیلات کاپی کرنے میں مسئلہ آیا ہے، دوبارہ کوشش کریں۔');
+        });
+    }
+
+    // سرچ فلٹر لاجک
+    document.getElementById('searchInput').addEventListener('keyup', function() {
+        const filter = this.value.toLowerCase().trim();
+        const rows = document.querySelectorAll('#jobsTableBody tr');
+        let hasVisibleRow = false;
+
+        rows.forEach(row => {
+            const text = row.textContent.toLowerCase();
+            if (text.includes(filter)) {
+                row.style.display = ''; 
+                hasVisibleRow = true;
+            } else {
+                row.style.display = 'none'; 
+            }
+        });
+
+        const noResult = document.getElementById('noResult');
+        noResult.style.display = hasVisibleRow ? 'none' : 'block';
+    });
+
+    loadJobs();
 </script>
 
 </body>
