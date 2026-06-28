@@ -179,12 +179,12 @@
             font-weight: bold;
         }
 
-        /* 🔔 نوٹیفکیشن ٹوسٹ میسج */
+        /* 🔔 تبدیل شدہ نوٹیفکیشن فیڈ ان / فیڈ آؤٹ اسٹائل */
         .toast-notification {
             position: fixed;
             top: 20px;
             left: 50%;
-            transform: translateX(-50%) translateY(-500px);
+            transform: translateX(-50%);
             background: #ffffff;
             color: #1d232f;
             padding: 12px 20px;
@@ -193,15 +193,21 @@
             font-weight: bold;
             box-shadow: 0 4px 15px rgba(0,0,0,0.5);
             z-index: 2000;
-            transition: transform 1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             text-align: center;
             width: 90%;
             max-width: 400px;
             direction: rtl;
+            
+            /* Fade-in Out لاجک ابتدائی طور پر مخفی */
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
         }
 
+        /* جب شو کلاس ایکٹو ہو تو دھندلا پن ختم ہو کر ظاہر ہو جائے */
         .toast-notification.show {
-            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+            visibility: visible;
         }
 
         /* 📱 موبائل کے لیے ڈیزائن */
@@ -296,7 +302,7 @@
         { designation: "سافٹ ویئر ڈویلپر", department: "پنجاب آئی ٹی بورڈ (PITB)", education: "بی ایس سی ایس", deadline: "15-07-2026", fee: "1000" },
         { designation: "اسسٹنٹ ڈائریکٹر", department: "محکمہ زراعت (Agriculture Department)", education: "ماسٹرز", deadline: "15-07-2026", fee: "600" },
         { designation: "سیکیورٹی گارڈ", department: "لوکل گورنمنٹ (Local Government)", education: "میٹرک", deadline: "15-07-2026", fee: "100" },
-        { designation: "اکاؤنٹنٹ", department: "محکمہ مال (Revenue Department)", education: "بی کام", deadline: "15-07-2026", fee: "400" },
+        { designation: "اکاؤنٹنٹ", department: "محکمہ مال (Revenue Department)", education: "بی کام", deadline: "14-07-2026", fee: "400" },
         { designation: "ڈیٹا انٹری آپریٹر", department: "پولیس ڈیپارٹمنٹ (Police)", education: "انٹرمیڈیٹ", deadline: "15-07-2026", fee: "300" },
         { designation: "سب انسپکٹر", department: "پنجاب پولیس (Punjab Police)", education: "گریجوایٹ", deadline: "15-07-2026", fee: "500" },
         { designation: "لیڈی ہیلتھ وزٹر", department: "پرائمری Health کیئر", education: "ڈپلومہ", deadline: "15-07-2026", fee: "500" },
@@ -337,13 +343,13 @@
         });
     }
 
-    // کاپی کرنے اور نوٹیفکیشن دکھانے کا فنکشن
+    // کاپی کرنے اور نوٹیفکیشن دکھانے کا فنکشن (Fade-in / Fade-out)
     function copyJobDetails(text) {
         navigator.clipboard.writeText(text).then(() => {
             const toast = document.getElementById('toast');
             toast.classList.add('show');
             
-            // 5 سیکنڈ بعد نوٹیفکیشن غائب ہو جائے گا
+            // 5 سیکنڈ بعد نوٹیفکیشن آہستہ سے غائب (Fade-out) ہو جائے گا
             setTimeout(() => {
                 toast.classList.remove('show');
             }, 5000);
