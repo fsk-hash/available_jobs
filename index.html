@@ -20,60 +20,74 @@
 
         body {
             font-family: 'Noto Sans Arabic', sans-serif;
-            background-color: #1d232f;
-            color: #e0e0e0;
+            /* 🌟 ایپ تھیم کے مطابق صاف ستھرا لائٹ گریڈئینٹ بیک گراؤنڈ */
+            background: linear-gradient(-45deg, #f4f6f9, #eef2f7, #e2e8f0, #f8fafc);
+            background-size: 400% 400%;
+            animation: gradientAnimation 15s ease infinite;
+            color: #1e252b; /* گہرا ٹیکسٹ واضح نظر آنے کے لیے */
             padding: 8px;
             display: flex;
             flex-direction: column;
         }
 
+        /* 🌟 گریڈئینٹ کی موومنٹ کے لیے اینیمیشن کی فریمز */
+        @keyframes gradientAnimation {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
         .container {
             max-width: 1200px;
             margin: 0 auto;
-            background: #1e1e1e;
+            background: rgba(255, 255, 255, 0.8); /* سفید شیشے جیسا تاثر (Glassmorphism) */
+            backdrop-filter: blur(15px); 
+            -webkit-backdrop-filter: blur(15px);
             padding: 12px;
             border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            border: 1px solid rgba(15, 43, 56, 0.1);
+            box-shadow: 0 8px 32px rgba(15, 43, 56, 0.08);
             width: 100%;
             height: 100%;
             display: flex;
             flex-direction: column;
-            overflow: hidden; /* کنٹینر سے باہر ڈیٹا نہ نکلے */
+            overflow: hidden;
         }
 
         .search-container {
             margin-bottom: 12px;
             display: flex;
             justify-content: center;
-            flex-shrink: 0; /* سرچ بار اپنی جگہ فکس رہے */
+            flex-shrink: 0;
         }
 
         .search-box {
             width: 100%;
             max-width: 500px;
-            padding: 8px 15px;
+            padding: 10px 15px;
             font-size: 14px;
             font-family: 'Noto Sans Arabic', sans-serif;
-            background-color: #2a2a2a;
-            border: 2px solid #7a80bd;
-            color: #ffffff;
+            background-color: #ffffff;
+            border: 2px solid #cbd5e1;
+            color: #1e252b;
             border-radius: 30px;
             outline: none;
             transition: all 0.3s ease;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
             text-align: center;
         }
 
         .search-box:focus {
-            border-color: #3498db;
+            border-color: #0f2b38; /* ایپ کا مین گہرا نیلا رنگ */
+            box-shadow: 0 0 10px rgba(15, 43, 56, 0.15);
         }
 
         .table-responsive {
             width: 100%;
-            overflow-y: auto; /* صرف اس حصے میں سکرول بار ظاہر ہوگی */
-            flex-grow: 1; /* باقی بچی ہوئی تمام جگہ یہ حصہ لے گا */
+            overflow-y: auto;
+            flex-grow: 1;
             padding-bottom: 10px;
-            direction: ltr; /* سکرول بار کو دائیں جانب لانے کے لیے */
+            direction: ltr; /* سکرول بار دائیں طرف رکھنے کے لیے */
         }
 
         table {
@@ -81,43 +95,39 @@
             border-collapse: collapse;
             margin-top: 5px;
             text-align: right;
-            direction: rtl; /* ٹیبل کے ٹیکسٹ اور کالمز کو واپس اردو ترتیب (RTL) میں رکھنے کے لیے */
+            direction: rtl;
         }
 
         th, td {
-            padding: 8px 10px;
-            border-bottom: 1px solid #2d3748;
+            padding: 10px 12px;
+            border-bottom: 1px solid rgba(15, 43, 56, 0.08);
             font-size: 14px;
             vertical-align: middle;
         }
 
         th {
-            background-color: #1d232f;
-            color: #ffffff;
+            background-color: #0f2b38; /* ایپ کا مین گہرا نیلا ہیڈر */
+            color: #ffffff; 
             font-weight: 700;
-            position: sticky; /* ڈیسک ٹاپ پر ٹیبل ہیڈنگ کو فکس رکھنے کے لیے */
+            position: sticky;
             top: 0;
             z-index: 10;
         }
 
         tr:nth-child(odd) {
-            background-color: #1d232f;
+            background-color: rgba(255, 255, 255, 0.5);
         }
 
         tr:nth-child(even) {
-            background-color: #171c25;
-        }
-
-        tr:hover {
-            background-color: #2d3748;
+            background-color: rgba(241, 245, 249, 0.6);
         }
 
         .job-id {
             font-family: arial;
             font-weight: bold;
-            color: #ffb400;
-            background: #1d232f;
-            padding: 2px 6px;
+            color: #0f2b38; /* گہرا نیلا ٹیکسٹ */
+            background: #f2e311; /* ایپ کا پیلا رنگ بیک گراؤنڈ میں */
+            padding: 3px 8px;
             border-radius: 4px;
             font-size: 13px;
             display: inline-block;
@@ -125,92 +135,91 @@
         }
 
         .fee-badge {
-            background: #1a365d;
-            color: #fffc00;
-            padding: 2px 8px;
+            background: #e2e8f0;
+            color: #0f2b38;
+            padding: 3px 8px;
             border-radius: 6px;
             font-weight: bold;
             font-size: 13px;
+            border: 1px solid #cbd5e1;
         }
 
         .free-badge {
-            background: #064e3b;
-            color: #6ee7b7;
-            padding: 2px 8px;
+            background: #d1fae5;
+            color: #065f46;
+            padding: 3px 8px;
             border-radius: 6px;
             font-weight: bold;
             font-size: 13px;
         }
 
         .date-badge {
-            background: #1d232f;
-            color: #ffffff;
-            padding: 2px 8px;
+            background: #f1f5f9;
+            color: #475569;
+            padding: 3px 8px;
             border-radius: 20px;
             font-size: 12px;
             font-weight: bold;
+            border: 1px solid #e2e8f0;
             display: inline-block;
         }
 
         .copy-btn {
-            background-color: #1a365d;
-            color: white;
+            background-color: #0f2b38; /* ایپ کا گہرا نیلا رنگ */
+            color: #ffffff; 
             border: none;
-            padding: 6px 12px;
+            padding: 8px 14px;
             border-radius: 6px;
             font-weight: bold;
             font-size: 13px;
             cursor: pointer;
             width: 100%;
             font-family: 'Noto Sans Arabic', sans-serif;
-            transition: background 0.2s ease;
+            transition: all 0.2s ease;
         }
 
         .copy-btn:hover {
-            background-color: #2980b9;
+            background-color: #163645;
+            box-shadow: 0 4px 12px rgba(15, 43, 56, 0.2);
         }
 
         .no-result {
             display: none;
             text-align: center;
             padding: 20px;
-            color: #a0aec0;
+            color: #64748b;
             font-size: 16px;
             font-weight: bold;
         }
 
-        /* 🔔 تبدیل شدہ نوٹیفکیشن فیڈ ان / فیڈ آؤٹ اسٹائل */
         .toast-notification {
             position: fixed;
             top: 20px;
             left: 50%;
             transform: translateX(-50%);
-            background: #ffffff;
-            color: #1d232f;
+            background: #0f2b38; /* گہرا نیلا نوٹیفکیشن */
+            color: #ffffff;
             padding: 12px 20px;
             border-radius: 8px;
-            font-size: 18px;
+            font-size: 16px;
             font-weight: bold;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
             z-index: 2000;
             text-align: center;
             width: 90%;
             max-width: 400px;
             direction: rtl;
-            
-            /* Fade-in Out لاجک ابتدائی طور پر مخفی */
             opacity: 0;
             visibility: hidden;
             transition: opacity 0.5s ease, visibility 0.5s ease;
         }
 
-        /* جب شو کلاس ایکٹو ہو تو دھندلا پن ختم ہو کر ظاہر ہو جائے */
         .toast-notification.show {
             opacity: 1;
             visibility: visible;
         }
 
-        /* 📱 موبائل کے لیے ڈیزائن */
+        /* 📱 موبائل ریسپانسو ویو */
         @media screen and (max-width: 768px) {
             table thead {
                 display: none;
@@ -222,31 +231,39 @@
             }
 
             tr {
-                margin-bottom: 8px;
-                border: 1px solid #7a80bd;
-                border-radius: 8px;
-                padding: 6px 8px;
-                background: #1e1e1e;
-                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                margin-bottom: 12px;
+                border: 1px solid #e2e8f0;
+                border-radius: 12px;
+                padding: 10px 12px;
+                background: #ffffff;
+                box-shadow: 0 4px 6px rgba(15, 43, 56, 0.03);
+                transition: transform 0.2s ease;
+            }
+
+            tr:active {
+                transform: scale(1.01);
+                background: #f8fafc;
+                border-color: #0f2b38;
             }
 
             td {
                 text-align: left;
                 padding-right: 45%;
                 padding-left: 0px;
-                padding-top: 3px;
-                padding-bottom: 3px;
+                padding-top: 8px;
+                padding-bottom: 8px;
                 position: relative;
-                border-bottom: 1px dashed #52567e;
+                border-bottom: 1px dashed #edf2f7;
                 font-size: 13px;
-                min-height: 28px;
+                min-height: 38px;
+                color: #334155;
             }
 
             td:last-child {
                 border-bottom: none;
                 padding-right: 0;
                 padding-left: 0;
-                padding-top: 0px;
+                padding-top: 10px;
                 text-align: center;
             }
 
@@ -258,7 +275,7 @@
                 width: 40%;
                 text-align: right;
                 font-weight: bold;
-                color: #a0aec0;
+                color: #64748b;
                 font-size: 12px;
             }
         }
@@ -266,7 +283,7 @@
 </head>
 <body>
 
-<div id="toast" class="toast-notification">آرڈر کاپی ہو چکا ہے! نیچے واٹس ایپ کے بٹن پر کلک کریں اور چیٹ ونڈو کھلنے پر اپنا آرڈر Pasteکر کے E-Services کو بھیج دیں تاکہ آپ کی درخواست پر کام شروع کیا جاسکے۔شکریہ۔</div>
+<div id="toast" class="toast-notification">آرڈر کاپی ہو چکا ہے! نیچے واٹس ایپ کے بٹن پر کلک کریں اور چیٹ ونڈو کھلنے پر اپنا آرڈر Paste کر کے E-Services کو بھیج دیں تاکہ آپ کی درخواست پر کام شروع کیا جاسکے۔ شکریہ۔</div>
 
 <div class="container">
 
@@ -318,7 +335,6 @@
             const jobId = `ESJ-${1001 + index}`;
             const feeText = job.fee.toLowerCase() === 'free' ? 'Free' : `Rs. ${job.fee}`;
             
-            // کاپی ہونے والا ٹیکسٹ فارمیٹ
             const copyText = `السلام علیکم! مجھے اس جاب پر اپلائی کروانا ہے:\n\n جاب آئی ڈی: ${jobId}\n عہدہ: ${job.designation}\n محکمہ: ${job.department}\n تعلیم: ${job.education || '-'}\n فیس: ${feeText}\n آخری تاریخ: ${job.deadline}`;
 
             let feeDisplay = job.fee.toLowerCase() === 'free' 
@@ -328,13 +344,13 @@
             const row = document.createElement('tr');
             row.innerHTML = `
                 <td data-label="Job ID"><span class="job-id">${jobId}</span></td>
-                <td data-label="عہدہ"><big><big><strong>${job.designation}</big></big></strong></td>
+                <td data-label="عہدہ"><big><big><strong>${job.designation}</strong></big></big></td>
                 <td data-label="محکمہ / ادارہ">${job.department}</td>
                 <td data-label="تعلیم">${job.education || '-'}</td>
                 <td data-label="آخری تاریخ"><span class="date-badge">${job.deadline}</span></td>
-                <td data-label="پراسیسنگ فیس + چالان فیس">${feeDisplay}</td>
+                <td data-label="Apply Fee">${feeDisplay}</td>
                 <td>
-                    <button type="button" class="copy-btn" onclick="copyJobDetails(\`${copyText.replace(/`/g, '\\`').replace(/\n/g, '\\n')}\`)">
+                    <button type="button" class="copy-btn" onclick="copyJobDetails(\`${copyText.replace(/`/g, '\\`').replace(/\n/g, '\\n')}\`\)">
                         جاب اپلائی کروائیں
                     </button>
                 </td>
@@ -343,13 +359,11 @@
         });
     }
 
-    // کاپی کرنے اور نوٹیفکیشن دکھانے کا فنکشن (Fade-in / Fade-out)
     function copyJobDetails(text) {
         navigator.clipboard.writeText(text).then(() => {
             const toast = document.getElementById('toast');
             toast.classList.add('show');
             
-            // 5 سیکنڈ بعد نوٹیفکیشن آہستہ سے غائب (Fade-out) ہو جائے گا
             setTimeout(() => {
                 toast.classList.remove('show');
             }, 5000);
@@ -358,7 +372,6 @@
         });
     }
 
-    // سرچ فلٹر لاجک
     document.getElementById('searchInput').addEventListener('keyup', function() {
         const filter = this.value.toLowerCase().trim();
         const rows = document.querySelectorAll('#jobsTableBody tr');
