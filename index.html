@@ -1,302 +1,607 @@
 <!DOCTYPE html>
 <html lang="ur" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>میڈیا مینیجر - حسین ای سروسز</title>
-    
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>سائن ان / سائن اپ</title>
+  
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    body {
+      background-color: #f4f6f9;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 10px;
+    }
+    .card {
+      background: #ffffff;
+      width: 100%;
+      max-width: 360px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      padding: 15px;
+    }
+    h2 {
+      text-align: center;
+      font-size: 20px;
+      color: #333;
+      margin-bottom: 12px;
+    }
+    .form-group {
+      margin-bottom: 8px;
+    }
+    label {
+      display: block;
+      font-size: 12px;
+      color: #555;
+      margin-bottom: 3px;
+    }
+    input, select {
+      width: 100%;
+      padding: 8px 10px;
+      font-size: 14px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      outline: none;
+      direction: ltr;
+      background-color: #fff;
+    }
+    input.text-input, select.text-input {
+      direction: rtl;
+    }
+    input:focus, select:focus {
+      border-color: #007bff;
+    }
+    .phone-wrapper {
+      display: flex;
+      direction: ltr;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      overflow: hidden;
+      background: #fff;
+    }
+    .phone-wrapper:focus-within {
+      border-color: #007bff;
+    }
+    .phone-prefix {
+      background-color: #e9ecef;
+      color: #495057;
+      padding: 8px 10px;
+      font-size: 14px;
+      font-weight: bold;
+      border-right: 1px solid #ccc;
+      user-select: none;
+      display: flex;
+      align-items: center;
+    }
+    .phone-wrapper input {
+      border: none;
+      border-radius: 0;
+      padding-left: 8px;
+    }
+    .btn {
+      width: 100%;
+      padding: 9px;
+      font-size: 14px;
+      font-weight: bold;
+      color: #fff;
+      background-color: #007bff;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-top: 5px;
+    }
+    .btn-secondary {
+      background-color: #6c757d;
+    }
+    .link-btn {
+      background: none;
+      border: none;
+      color: #007bff;
+      font-size: 12px;
+      cursor: pointer;
+      display: block;
+      margin: 8px auto 0;
+      text-decoration: underline;
+    }
+    .hidden {
+      display: none;
+    }
+    .msg {
+      font-size: 12px;
+      text-align: center;
+      margin-top: 8px;
+    }
+    .msg.error { color: #d9534f; }
+    .msg.success { color: #5cb85c; }
+    #recaptcha-container {
+      margin-top: 5px;
+    }
+  </style>
 
-    <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
-        body {
-            background-color: #121212;
-            color: #ffffff;
-            padding: 10px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
-        }
-
-        .container {
-            width: 100%;
-            max-width: 360px; /* 360px چوڑائی کے لیے فکسڈ */
-            text-align: center;
-        }
-
-        h2 {
-            margin: 12px 0;
-            color: #00adb5;
-            font-size: 20px;
-            letter-spacing: 0.5px;
-        }
-
-        .upload-btn {
-            background-color: #00adb5;
-            color: white;
-            border: none;
-            padding: 12px 20px;
-            border-radius: 6px;
-            font-weight: bold;
-            cursor: pointer;
-            margin-bottom: 15px;
-            width: 100%;
-            font-size: 14px;
-            transition: background-color 0.2s;
-        }
-
-        .upload-btn:active {
-            background-color: #008188;
-        }
-
-        /* 360px پر 4 تھمب نیلز ایک لائن میں سیٹ کرنے کے لیے */
-        .gallery-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 6px;
-            padding: 5px 0;
-        }
-
-        .thumbnail-card {
-            background-color: #1e1e1e;
-            border-radius: 6px;
-            overflow: hidden;
-            aspect-ratio: 1 / 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            border: 1px solid #2d2d2d;
-            transition: transform 0.1s;
-        }
-
-        .thumbnail-card:active {
-            transform: scale(0.95);
-        }
-
-        .thumbnail-card img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        /* جب کوئی فائل نہ ہو تو یہ اسٹائل چلے گا */
-        .no-data {
-            grid-column: 1 / -1;
-            padding: 50px 10px;
-            color: #ff4a4a;
-            font-size: 16px;
-            font-weight: bold;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        /* ایکشن مینو پاپ اپ (Modal) */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.85);
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-        }
-
-        .modal-content {
-            background-color: #1e1e1e;
-            padding: 20px;
-            border-radius: 10px;
-            width: 85%;
-            max-width: 280px;
-            text-align: center;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.6);
-            border: 1px solid #333;
-        }
-
-        .modal-title {
-            margin-bottom: 15px;
-            font-size: 15px;
-            color: #00adb5;
-            font-weight: bold;
-        }
-
-        .modal-btn {
-            display: block;
-            width: 100%;
-            padding: 11px;
-            margin: 8px 0;
-            border: none;
-            border-radius: 6px;
-            font-weight: bold;
-            cursor: pointer;
-            font-size: 14px;
-        }
-
-        .btn-download { background-color: #28a745; color: white; }
-        .btn-replace { background-color: #ffc107; color: #121212; }
-        .btn-delete { background-color: #dc3545; color: white; }
-        .btn-cancel { background-color: #444444; color: white; }
-    </style>
+  <!-- Firebase Web SDKs (v8) -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 </head>
 <body>
 
-    <div class="container">
-        <h2>میڈیا گیلری</h2>
-        
-        <button class="upload-btn" onclick="triggerImagePicker()">نئی فائل اپلوڈ کریں</button>
-        
-        <div class="gallery-grid" id="gallery">
-            <div class="no-data">No Files Uploaded</div>
-        </div>
+<div class="card">
+  <!-- 1. سائن ان فارم -->
+  <div id="login-form">
+    <h2>لاگ ان کریں</h2>
+    <div class="form-group">
+      <label>موبائل نمبر</label>
+      <div class="phone-wrapper">
+        <span class="phone-prefix">+92</span>
+        <input type="tel" id="login-phone" placeholder="3001234567" maxlength="10" oninput="validatePhoneInput(this)">
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="login-pass">پاسورڈ</label>
+      <input type="password" id="login-pass" placeholder="پاسورڈ درج کریں">
+    </div>
+    <button class="btn" onclick="handleLogin()">سائن ان کریں</button>
+    
+    <button class="link-btn" onclick="switchForm('forgot')">پاسورڈ بھول گئے؟</button>
+    <button class="link-btn" onclick="switchForm('signup')">نیا اکاؤنٹ بنائیں (سائن اپ)</button>
+  </div>
+
+  <!-- 2. سائن اپ فارم -->
+  <div id="signup-form" class="hidden">
+    <h2>نیا اکاؤنٹ بنائیں</h2>
+    
+    <div class="form-group">
+      <label for="signup-name">پورا نام</label>
+      <input type="text" id="signup-name" class="text-input" placeholder="اپنا پورا نام درج کریں">
     </div>
 
-    <div class="modal" id="actionModal">
-        <div class="modal-content">
-            <div class="modal-title">آپشن منتخب کریں</div>
-            <button class="modal-btn btn-download" onclick="handleDownload()">Download</button>
-            <button class="modal-btn btn-replace" onclick="handleReplace()">Replace</button>
-            <button class="modal-btn btn-delete" onclick="handleDelete()">Delete</button>
-            <button class="modal-btn btn-cancel" onclick="closeModal()">کینسل</button>
-        </div>
+    <div class="form-group">
+      <label for="signup-city">موجودہ شہر</label>
+      <select id="signup-city" class="text-input">
+        <option value="">-- شہر کا انتخاب کریں --</option>
+        <option value="Abbottabad">Abbottabad</option>
+        <option value="Arifwala">Arifwala</option>
+        <option value="Astore">Astore</option>
+        <option value="Attock">Attock</option>
+        <option value="Awaran">Awaran</option>
+        <option value="Badin">Badin</option>
+        <option value="Bahawalpur">Bahawalpur</option>
+        <option value="Bannu">Bannu</option>
+        <option value="Batkhela (Malakand)">Batkhela (Malakand)</option>
+        <option value="Bhakkar">Bhakkar</option>
+        <option value="Bhimber">Bhimber</option>
+        <option value="Chakwal">Chakwal</option>
+        <option value="Chaman">Chaman</option>
+        <option value="Charsadda">Charsadda</option>
+        <option value="Chilas">Chilas</option>
+        <option value="Chiniot">Chiniot</option>
+        <option value="Chitral">Chitral</option>
+        <option value="Dadu">Dadu</option>
+        <option value="Daska">Daska</option>
+        <option value="Dera Ghazi Khan">Dera Ghazi Khan</option>
+        <option value="Dera Ismail Khan">Dera Ismail Khan</option>
+        <option value="Dera Murad Jamali">Dera Murad Jamali</option>
+        <option value="Dir Lower (Timergara)">Dir Lower (Timergara)</option>
+        <option value="Dir Upper">Dir Upper</option>
+        <option value="Faisalabad">Faisalabad</option>
+        <option value="Fort Abbas">Fort Abbas</option>
+        <option value="Ghotki">Ghotki</option>
+        <option value="Gilgit">Gilgit</option>
+        <option value="Gujranwala">Gujranwala</option>
+        <option value="Gujrat">Gujrat</option>
+        <option value="Gwadar">Gwadar</option>
+        <option value="Hafizabad">Hafizabad</option>
+        <option value="Hangu">Hangu</option>
+        <option value="Haripur">Haripur</option>
+        <option value="Haroonabad">Haroonabad</option>
+        <option value="Hasilpur">Hasilpur</option>
+        <option value="Hunza (Karimabad)">Hunza (Karimabad)</option>
+        <option value="Hyderabad">Hyderabad</option>
+        <option value="Jacobabad">Jacobabad</option>
+        <option value="Jaffarabad">Jaffarabad</option>
+        <option value="Jamshoro">Jamshoro</option>
+        <option value="Jampur">Jampur</option>
+        <option value="Jhelum">Jhelum</option>
+        <option value="Kabirwala">Kabirwala</option>
+        <option value="Kallar Kahar">Kallar Kahar</option>
+        <option value="Kamoke">Kamoke</option>
+        <option value="Kandhkot">Kandhkot</option>
+        <option value="Karachi">Karachi</option>
+        <option value="Karak">Karak</option>
+        <option value="Kasur">Kasur</option>
+        <option value="Khairpur">Khairpur</option>
+        <option value="Khanewal">Khanewal</option>
+        <option value="Khanpur">Khanpur</option>
+        <option value="Kharian">Kharian</option>
+        <option value="Khaplu">Khaplu</option>
+        <option value="Kharan">Kharan</option>
+        <option value="Khipro">Khipro</option>
+        <option value="Khuzdar">Khuzdar</option>
+        <option value="Khyber (Jamrud)">Khyber (Jamrud)</option>
+        <option value="Killa Saifullah">Killa Saifullah</option>
+        <option value="Kohat">Kohat</option>
+        <option value="Kohistan">Kohistan</option>
+        <option value="Kot Addu">Kot Addu</option>
+        <option value="Kotri">Kotri</option>
+        <option value="Lahore">Lahore</option>
+        <option value="Lakki Marwat">Lakki Marwat</option>
+        <option value="Larkana">Larkana</option>
+        <option value="Lasbela (Hub)">Lasbela (Hub)</option>
+        <option value="Layyah">Layyah</option>
+        <option value="Lodhran">Lodhran</option>
+        <option value="Loralai">Loralai</option>
+        <option value="Mailsi">Mailsi</option>
+        <option value="Mansehra">Mansehra</option>
+        <option value="Mardan">Mardan</option>
+        <option value="Mastung">Mastung</option>
+        <option value="Matli">Matli</option>
+        <option value="Mianwali">Mianwali</option>
+        <option value="Mirpur Khas">Mirpur Khas</option>
+        <option value="Mirwah">Mirwah</option>
+        <option value="Mithi">Mithi</option>
+        <option value="Multan">Multan</option>
+        <option value="Murree">Murree</option>
+        <option value="Muzaffargarh">Muzaffargarh</option>
+        <option value="Nagar">Nagar</option>
+        <option value="Narowal">Narowal</option>
+        <option value="Nawabshah">Nawabshah</option>
+        <option value="Nowshera">Nowshera</option>
+        <option value="Okara">Okara</option>
+        <option value="Ormara">Ormara</option>
+        <option value="Pakpattan">Pakpattan</option>
+        <option value="Panjgur">Panjgur</option>
+        <option value="Parachinar (Kurram)">Parachinar (Kurram)</option>
+        <option value="Pasni">Pasni</option>
+        <option value="Peshawar">Peshawar</option>
+        <option value="Phalia">Phalia</option>
+        <option value="Quetta">Quetta</option>
+        <option value="Rahim Yar Khan">Rahim Yar Khan</option>
+        <option value="Rajanpur">Rajanpur</option>
+        <option value="Rawalpindi">Rawalpindi</option>
+        <option value="Sahiwal">Sahiwal</option>
+        <option value="Samundri">Samundri</option>
+        <option value="Sanghar">Sanghar</option>
+        <option value="Sargodha">Sargodha</option>
+        <option value="Sehwan Sharif">Sehwan Sharif</option>
+        <option value="Shahdadkot">Shahdadkot</option>
+        <option value="Shakargarh">Shakargarh</option>
+        <option value="Shangla">Shangla</option>
+        <option value="Sheikhupura">Sheikhupura</option>
+        <option value="Shigar">Shigar</option>
+        <option value="Shikarpur">Shikarpur</option>
+        <option value="Shorkot">Shorkot</option>
+        <option value="Sibi">Sibi</option>
+        <option value="Sialkot">Sialkot</option>
+        <option value="Skardu">Skardu</option>
+        <option value="Sukkur">Sukkur</option>
+        <option value="Sukkur Rohri">Sukkur Rohri</option>
+        <option value="Swabi">Swabi</option>
+        <option value="Swat (Mingora)">Swat (Mingora)</option>
+        <option value="Talagang">Talagang</option>
+        <option value="Tando Adam">Tando Adam</option>
+        <option value="Tando Allahyar">Tando Allahyar</option>
+        <option value="Tank">Tank</option>
+        <option value="Tharparkar">Tharparkar</option>
+        <option value="Thatta">Thatta</option>
+        <option value="Toba Tek Singh">Toba Tek Singh</option>
+        <option value="Turbat">Turbat</option>
+        <option value="Umerkot">Umerkot</option>
+        <option value="Vehari">Vehari</option>
+        <option value="Washuk">Washuk</option>
+        <option value="Wazirabad">Wazirabad</option>
+        <option value="Zhob">Zhob</option>
+        <option value="Ziarat">Ziarat</option>
+      </select>
     </div>
 
-    <script>
-        // --- آپ کے فراہم کردہ JSON کے مطابق آٹو کنفیگریشن ---
-        const firebaseConfig = {
-            apiKey: "AIzaSyDhBSYrjhZMTtIQbGox7GRwyQgD_zpieAU",
-            authDomain: "e-services-1801a.firebaseapp.com",
-            databaseURL: "https://e-services-1801a-default-rtdb.firebaseio.com",
-            projectId: "e-services-1801a",
-            storageBucket: "e-services-1801a.firebasestorage.app",
-            messagingSenderId: "704425720967",
-            appId: "1:704425720967:android:805848215daebc79998c22"
-        };
+    <div class="form-group">
+      <label>موبائل نمبر</label>
+      <div class="phone-wrapper">
+        <span class="phone-prefix">+92</span>
+        <input type="tel" id="signup-phone" placeholder="3001234567" maxlength="10" oninput="validatePhoneInput(this)">
+      </div>
+    </div>
 
-        // فائربیس انیشلائزیشن
-        firebase.initializeApp(firebaseConfig);
-        const database = firebase.database();
+    <!-- پاسورڈ کے دو باکسز -->
+    <div class="form-group">
+      <label for="signup-pass">پاسورڈ</label>
+      <input type="password" id="signup-pass" placeholder="پاسورڈ منتخب کریں">
+    </div>
+    <div class="form-group">
+      <label for="signup-pass-confirm">پاسورڈ کی تصدیق کریں</label>
+      <input type="password" id="signup-pass-confirm" placeholder="پاسورڈ دوبارہ درج کریں">
+    </div>
+    
+    <button class="btn" id="send-otp-btn" onclick="sendSignupOTP()">OTP بھیجیں</button>
+
+    <!-- OTP سیکشن -->
+    <div id="signup-otp-sec" class="hidden">
+      <div class="form-group" style="margin-top: 8px;">
+        <label for="signup-otp">او ٹی پی (OTP)</label>
+        <input type="number" id="signup-otp" placeholder="6 ہندسوں کا کوڈ">
+      </div>
+      <button class="btn btn-secondary" onclick="verifySignupOTP()">ویریفائی اور سائن اپ کریں</button>
+    </div>
+
+    <button class="link-btn" onclick="switchForm('login')">پہلے سے اکاؤنٹ ہے؟ لاگ ان کریں</button>
+  </div>
+
+  <!-- 3. فارگیٹ پاسورڈ فارم -->
+  <div id="forgot-form" class="hidden">
+    <h2>پاسورڈ ری سیٹ کریں</h2>
+    <div class="form-group">
+      <label>موبائل نمبر</label>
+      <div class="phone-wrapper">
+        <span class="phone-prefix">+92</span>
+        <input type="tel" id="forgot-phone" placeholder="3001234567" maxlength="10" oninput="validatePhoneInput(this)">
+      </div>
+    </div>
+    
+    <button class="btn" id="forgot-otp-btn" onclick="sendForgotOTP()">OTP بھیجیں</button>
+
+    <div id="forgot-otp-sec" class="hidden">
+      <div class="form-group" style="margin-top: 8px;">
+        <label for="forgot-otp">او ٹی پی (OTP)</label>
+        <input type="number" id="forgot-otp" placeholder="6 ہندسوں کا کوڈ">
+      </div>
+      <div class="form-group">
+        <label for="new-pass">نیا پاسورڈ</label>
+        <input type="password" id="new-pass" placeholder="نیا پاسورڈ درج کریں">
+      </div>
+      <button class="btn btn-secondary" onclick="resetPassword()">پاسورڈ تبدیل کریں</button>
+    </div>
+
+    <button class="link-btn" onclick="switchForm('login')">واپس لاگ ان پر جائیں</button>
+  </div>
+
+  <div id="recaptcha-container"></div>
+  <div id="msg-box" class="msg"></div>
+</div>
+
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyDhBSYrjhZMTtIQbGox7GRwyQgD_zpieAU",
+    authDomain: "e-services-1801a.firebaseapp.com",
+    databaseURL: "https://e-services-1801a-default-rtdb.firebaseio.com",
+    projectId: "e-services-1801a",
+    storageBucket: "e-services-1801a.firebasestorage.app",
+    messagingSenderId: "704425720967",
+    appId: "1:704425720967:android:805848215daebc79998c22"
+  };
+
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+  const db = firebase.database();
+
+  let confirmationResultObj = null;
+
+  window.onload = function() {
+    window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
+      'size': 'invisible'
+    });
+  };
+
+  // Kodular App کو ڈیٹا بھیجنے کا فنکشن
+  function sendDataToApp(action, phone, userId, userName, userCity) {
+    const data = {
+      status: "success",
+      action: action,       
+      userId: userId,       
+      phone: phone,         
+      userName: userName || "",
+      userCity: userCity || ""
+    };
+    
+    if (window.AppInventor) {
+      window.AppInventor.setWebViewString(JSON.stringify(data));
+    }
+  }
+
+  function validatePhoneInput(input) {
+    input.value = input.value.replace(/[^0-9]/g, '');
+    if (input.value.length > 10) {
+      input.value = input.value.slice(0, 10);
+    }
+  }
+
+  function getFullPhone(inputId) {
+    const rawDigits = document.getElementById(inputId).value.trim();
+    if (rawDigits.length !== 10) {
+      return null;
+    }
+    return '+92' + rawDigits;
+  }
+
+  function switchForm(form) {
+    clearMessages();
+    document.getElementById('login-form').classList.add('hidden');
+    document.getElementById('signup-form').classList.add('hidden');
+    document.getElementById('forgot-form').classList.add('hidden');
+
+    if (form === 'login') document.getElementById('login-form').classList.remove('hidden');
+    if (form === 'signup') document.getElementById('signup-form').classList.remove('hidden');
+    if (form === 'forgot') document.getElementById('forgot-form').classList.remove('hidden');
+  }
+
+  function showMsg(text, isError = false) {
+    const msgBox = document.getElementById('msg-box');
+    msgBox.innerText = text;
+    msgBox.className = 'msg ' + (isError ? 'error' : 'success');
+  }
+
+  function clearMessages() {
+    document.getElementById('msg-box').innerText = '';
+  }
+
+  // 1. لاگ ان لاجک
+  function handleLogin() {
+    const phone = getFullPhone('login-phone');
+    const pass = document.getElementById('login-pass').value.trim();
+
+    if (!phone || !pass) {
+      showMsg('براہ کرم موبائل نمبر اور پاسورڈ دونوں درج کریں۔', true);
+      return;
+    }
+
+    const safePhone = phone.replace(/[^0-9]/g, '');
+    db.ref('users/' + safePhone).once('value').then((snapshot) => {
+      if (snapshot.exists()) {
+        const userData = snapshot.val();
+        if (userData.password === pass) {
+          showMsg('کامیابی سے لاگ ان ہو گئے ہیں!');
+          
+          sendDataToApp("login", phone, safePhone, userData.name, userData.city);
+          
+        } else {
+          showMsg('پاسورڈ غلط ہے!', true);
+        }
+      } else {
+        showMsg('یہ نمبر رجسٹرڈ نہیں ہے۔ پہلے سائن اپ کریں۔', true);
+      }
+    }).catch(err => {
+      showMsg('خرابی: ' + err.message, true);
+    });
+  }
+
+  // 2. سائن اپ لاجک
+  function sendSignupOTP() {
+    const name = document.getElementById('signup-name').value.trim();
+    const city = document.getElementById('signup-city').value;
+    const phone = getFullPhone('signup-phone');
+    const pass = document.getElementById('signup-pass').value.trim();
+    const passConfirm = document.getElementById('signup-pass-confirm').value.trim();
+
+    if (!name) {
+      showMsg('براہ کرم اپنا پورا نام درج کریں۔', true);
+      return;
+    }
+    if (!city) {
+      showMsg('براہ کرم اپنے شہر کا انتخاب کریں۔', true);
+      return;
+    }
+    if (!phone) {
+      showMsg('براہ کرم 10 ہندسوں کا درست موبائل نمبر درج کریں۔', true);
+      return;
+    }
+    if (!pass) {
+      showMsg('براہ کرم پاسورڈ درج کریں۔', true);
+      return;
+    }
+    if (pass !== passConfirm) {
+      showMsg('پاسورڈز آپس میں میچ نہیں کر رہے!', true);
+      return;
+    }
+
+    const safePhone = phone.replace(/[^0-9]/g, '');
+    
+    db.ref('users/' + safePhone).once('value').then((snapshot) => {
+      if (snapshot.exists()) {
+        showMsg('یہ نمبر پہلے سے موجود ہے۔ لاگ ان کریں۔', true);
+      } else {
+        const appVerifier = window.recaptchaVerifier;
+        auth.signInWithPhoneNumber(phone, appVerifier)
+          .then((result) => {
+            confirmationResultObj = result;
+            document.getElementById('signup-otp-sec').classList.remove('hidden');
+            document.getElementById('send-otp-btn').classList.add('hidden');
+            showMsg('موبائل نمبر پر OTP بھیج دیا گیا ہے۔');
+          }).catch((error) => {
+            showMsg('OTP بھیجنے میں ناکامی: ' + error.message, true);
+          });
+      }
+    });
+  }
+
+  function verifySignupOTP() {
+    const otp = document.getElementById('signup-otp').value.trim();
+    const name = document.getElementById('signup-name').value.trim();
+    const city = document.getElementById('signup-city').value;
+    const phone = getFullPhone('signup-phone');
+    const pass = document.getElementById('signup-pass').value.trim();
+
+    if (!otp) {
+      showMsg('براہ کرم OTP درج کریں۔', true);
+      return;
+    }
+
+    confirmationResultObj.confirm(otp).then((result) => {
+      const safePhone = phone.replace(/[^0-9]/g, '');
+      
+      // Realtime Database میں تمام معلومات محفوظ کرنا
+      db.ref('users/' + safePhone).set({
+        name: name,
+        city: city,
+        phone: phone,
+        password: pass,
+        createdAt: new Date().toISOString()
+      }).then(() => {
+        showMsg('اکاؤنٹ کامیابی سے بن گیا ہے!');
         
-        let currentMobile = ""; 
-        let selectedFileKey = "";
-        let selectedFileUrl = "";
+        sendDataToApp("signup", phone, safePhone, name, city);
+      });
+    }).catch((error) => {
+      showMsg('غلط OTP درج کیا گیا ہے۔', true);
+    });
+  }
 
-        // --- کوڈولار ٹائنی ڈی بے سے موبائل نمبر حاصل کرنا ---
-        window.addEventListener('DOMContentLoaded', () => {
-            if (window.AppInventor) {
-                currentMobile = window.AppInventor.getWebViewString();
-                if(currentMobile) startListening(currentMobile);
-            }
-            
-            window.onWebViewStringChange = function(value) {
-                // اگر کوڈولار سے کوئی نیا نمبر یا اپڈیٹ آئے
-                if(value && value !== "upload_done" && !value.startsWith("download|") && !value.startsWith("replace|")) { 
-                    currentMobile = value;
-                    startListening(value);
-                }
-            };
-        });
+  // 3. فارگیٹ پاسورڈ
+  function sendForgotOTP() {
+    const phone = getFullPhone('forgot-phone');
+    if (!phone) {
+      showMsg('براہ کرم 10 ہندسوں کا درست موبائل نمبر درج کریں۔', true);
+      return;
+    }
 
-        // ریل ٹائم لسنر (جب بھی ڈیٹا بیس میں تبدیلی ہوگی، سکرین خود ہی اپڈیٹ ہو جائے گی)
-        function startListening(mobileNumber) {
-            const dbRef = database.ref('Users/' + mobileNumber + '/Images');
-            
-            dbRef.on('value', (snapshot) => {
-                const galleryContainer = document.getElementById('gallery');
-                galleryContainer.innerHTML = ''; // پرانا ویو صاف کریں
-                
-                if (snapshot.exists()) {
-                    const data = snapshot.val();
-                    let hasFiles = false;
-                    
-                    for (let key in data) {
-                        let imageUrl = data[key];
-                        if(imageUrl) {
-                            hasFiles = true;
-                            const card = document.createElement('div');
-                            card.className = 'thumbnail-card';
-                            card.onclick = () => openModal(key, imageUrl);
-                            
-                            const img = document.createElement('img');
-                            img.src = imageUrl;
-                            img.loading = "lazy";
-                            
-                            card.appendChild(img);
-                            galleryContainer.appendChild(card);
-                        }
-                    }
-                    
-                    if(!hasFiles) {
-                        showNoFilesMessage(galleryContainer);
-                    }
-                } else {
-                    showNoFilesMessage(galleryContainer);
-                }
-            });
-        }
+    const safePhone = phone.replace(/[^0-9]/g, '');
+    db.ref('users/' + safePhone).once('value').then((snapshot) => {
+      if (!snapshot.exists()) {
+        showMsg('یہ نمبر رجسٹرڈ نہیں ہے۔', true);
+      } else {
+        const appVerifier = window.recaptchaVerifier;
+        auth.signInWithPhoneNumber(phone, appVerifier)
+          .then((result) => {
+            confirmationResultObj = result;
+            document.getElementById('forgot-otp-sec').classList.remove('hidden');
+            document.getElementById('forgot-otp-btn').classList.add('hidden');
+            showMsg('پاسورڈ ری سیٹ کے لیے OTP بھیج دیا گیا ہے۔');
+          }).catch((error) => {
+            showMsg('خطا: ' + error.message, true);
+          });
+      }
+    });
+  }
 
-        function showNoFilesMessage(container) {
-            container.innerHTML = '<div class="no-data">No Files Uploaded</div>';
-        }
+  function resetPassword() {
+    const otp = document.getElementById('forgot-otp').value.trim();
+    const newPass = document.getElementById('new-pass').value.trim();
+    const phone = getFullPhone('forgot-phone');
 
-        // کوڈولار امیج پکر کو سگنل بھیجنا
-        function triggerImagePicker() {
-            if (window.AppInventor) {
-                window.AppInventor.setWebViewString("open_image_picker");
-            }
-        }
+    if (!otp || !newPass) {
+      showMsg('OTP اور نیا پاسورڈ دونوں درج کریں۔', true);
+      return;
+    }
 
-        // پاپ اپ مینو ہینڈلنگ
-        function openModal(key, url) {
-            selectedFileKey = key;
-            selectedFileUrl = url;
-            document.getElementById('actionModal').style.display = 'flex';
-        }
+    confirmationResultObj.confirm(otp).then((result) => {
+      const safePhone = phone.replace(/[^0-9]/g, '');
+      db.ref('users/' + safePhone).update({
+        password: newPass
+      }).then(() => {
+        showMsg('پاسورڈ کامیابی سے تبدیل ہو گیا۔ سائن ان کریں۔');
+        setTimeout(() => switchForm('login'), 1500);
+      });
+    }).catch((error) => {
+      showMsg('غلط OTP درج کیا گیا ہے۔', true);
+    });
+  }
+</script>
 
-        function closeModal() {
-            document.getElementById('actionModal').style.display = 'none';
-        }
-
-        // 1. ڈاؤنلوڈ ایکشن
-        function handleDownload() {
-            closeModal();
-            if (window.AppInventor) {
-                window.AppInventor.setWebViewString("download|" + selectedFileUrl);
-            } else {
-                window.open(selectedFileUrl, '_blank');
-            }
-        }
-
-        // 2. ریپلیس ایکشن
-        function handleReplace() {
-            closeModal();
-            if (window.AppInventor) {
-                window.AppInventor.setWebViewString("replace|" + selectedFileKey);
-            }
-        }
-
-        // 3. ڈیلیٹ ایکشن
-        function handleDelete() {
-            closeModal();
-            if(confirm("کیا آپ واقعی یہ فائل ڈیلیٹ کرنا چاہتے ہیں؟")) {
-                database.ref('Users/' + currentMobile + '/Images/' + selectedFileKey).remove()
-                .then(() => {
-                    // ریل ٹائم لسنر کی وجہ سے پیج خود ہی اپڈیٹ ہو جائے گا
-                }).catch((error) => {
-                    alert("فائل ڈیلیٹ کرنے میں خرابی آئی۔");
-                });
-            }
-        }
-    </script>
 </body>
 </html>
