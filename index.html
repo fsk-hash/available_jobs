@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="ur" dir="rtl">
+<html lang="en" dir="ltr">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>سائن ان / سائن اپ</title>
+  <title>Sign In / Sign Up</title>
   
   <style>
     * {
@@ -52,9 +52,6 @@
       outline: none;
       direction: ltr;
       background-color: #fff;
-    }
-    input.text-input, select.text-input {
-      direction: rtl;
     }
     input:focus, select:focus {
       border-color: #007bff;
@@ -134,39 +131,39 @@
 <body>
 
 <div class="card">
-  <!-- 1. سائن ان فارم -->
+  <!-- 1. Login Form -->
   <div id="login-form">
-    <h2>لاگ ان کریں</h2>
+    <h2>Login</h2>
     <div class="form-group">
-      <label>موبائل نمبر</label>
+      <label>Mobile Number</label>
       <div class="phone-wrapper">
         <span class="phone-prefix">+92</span>
         <input type="tel" id="login-phone" placeholder="3001234567" maxlength="10" oninput="validatePhoneInput(this)">
       </div>
     </div>
     <div class="form-group">
-      <label for="login-pass">پاسورڈ</label>
-      <input type="password" id="login-pass" placeholder="پاسورڈ درج کریں">
+      <label for="login-pass">Password</label>
+      <input type="password" id="login-pass" placeholder="Enter password">
     </div>
-    <button class="btn" onclick="handleLogin()">سائن ان کریں</button>
+    <button class="btn" onclick="handleLogin()">Sign In</button>
     
-    <button class="link-btn" onclick="switchForm('forgot')">پاسورڈ بھول گئے؟</button>
-    <button class="link-btn" onclick="switchForm('signup')">نیا اکاؤنٹ بنائیں (سائن اپ)</button>
+    <button class="link-btn" onclick="switchForm('forgot')">Forgot Password?</button>
+    <button class="link-btn" onclick="switchForm('signup')">Create New Account (Sign Up)</button>
   </div>
 
-  <!-- 2. سائن اپ فارم -->
+  <!-- 2. Sign Up Form -->
   <div id="signup-form" class="hidden">
-    <h2>نیا اکاؤنٹ بنائیں</h2>
+    <h2>Create New Account</h2>
     
     <div class="form-group">
-      <label for="signup-name">پورا نام</label>
-      <input type="text" id="signup-name" class="text-input" placeholder="اپنا پورا نام درج کریں">
+      <label for="signup-name">Full Name</label>
+      <input type="text" id="signup-name" placeholder="Enter your full name">
     </div>
 
     <div class="form-group">
-      <label for="signup-city">موجودہ شہر</label>
-      <select id="signup-city" class="text-input">
-        <option value="">-- شہر کا انتخاب کریں --</option>
+      <label for="signup-city">Current City</label>
+      <select id="signup-city">
+        <option value="">-- Select City --</option>
         <option value="Abbottabad">Abbottabad</option>
         <option value="Arifwala">Arifwala</option>
         <option value="Astore">Astore</option>
@@ -303,63 +300,62 @@
     </div>
 
     <div class="form-group">
-      <label>موبائل نمبر</label>
+      <label>Mobile Number</label>
       <div class="phone-wrapper">
         <span class="phone-prefix">+92</span>
         <input type="tel" id="signup-phone" placeholder="3001234567" maxlength="10" oninput="validatePhoneInput(this)">
       </div>
     </div>
 
-    <!-- پاسورڈ کے دو باکسز -->
     <div class="form-group">
-      <label for="signup-pass">پاسورڈ</label>
-      <input type="password" id="signup-pass" placeholder="پاسورڈ منتخب کریں">
+      <label for="signup-pass">Password</label>
+      <input type="password" id="signup-pass" placeholder="Create password">
     </div>
     <div class="form-group">
-      <label for="signup-pass-confirm">پاسورڈ کی تصدیق کریں</label>
-      <input type="password" id="signup-pass-confirm" placeholder="پاسورڈ دوبارہ درج کریں">
+      <label for="signup-pass-confirm">Confirm Password</label>
+      <input type="password" id="signup-pass-confirm" placeholder="Confirm password">
     </div>
     
-    <button class="btn" id="send-otp-btn" onclick="sendSignupOTP()">OTP بھیجیں</button>
+    <button class="btn" id="send-otp-btn" onclick="sendSignupOTP()">Send OTP</button>
 
-    <!-- OTP سیکشن -->
+    <!-- OTP Section -->
     <div id="signup-otp-sec" class="hidden">
       <div class="form-group" style="margin-top: 8px;">
-        <label for="signup-otp">او ٹی پی (OTP)</label>
-        <input type="number" id="signup-otp" placeholder="6 ہندسوں کا کوڈ">
+        <label for="signup-otp">OTP Code</label>
+        <input type="number" id="signup-otp" placeholder="6-digit OTP code">
       </div>
-      <button class="btn btn-secondary" onclick="verifySignupOTP()">ویریفائی اور سائن اپ کریں</button>
+      <button class="btn btn-secondary" onclick="verifySignupOTP()">Verify & Sign Up</button>
     </div>
 
-    <button class="link-btn" onclick="switchForm('login')">پہلے سے اکاؤنٹ ہے؟ لاگ ان کریں</button>
+    <button class="link-btn" onclick="switchForm('login')">Already have an account? Login</button>
   </div>
 
-  <!-- 3. فارگیٹ پاسورڈ فارم -->
+  <!-- 3. Forgot Password Form -->
   <div id="forgot-form" class="hidden">
-    <h2>پاسورڈ ری سیٹ کریں</h2>
+    <h2>Reset Password</h2>
     <div class="form-group">
-      <label>موبائل نمبر</label>
+      <label>Mobile Number</label>
       <div class="phone-wrapper">
         <span class="phone-prefix">+92</span>
         <input type="tel" id="forgot-phone" placeholder="3001234567" maxlength="10" oninput="validatePhoneInput(this)">
       </div>
     </div>
     
-    <button class="btn" id="forgot-otp-btn" onclick="sendForgotOTP()">OTP بھیجیں</button>
+    <button class="btn" id="forgot-otp-btn" onclick="sendForgotOTP()">Send OTP</button>
 
     <div id="forgot-otp-sec" class="hidden">
       <div class="form-group" style="margin-top: 8px;">
-        <label for="forgot-otp">او ٹی پی (OTP)</label>
-        <input type="number" id="forgot-otp" placeholder="6 ہندسوں کا کوڈ">
+        <label for="forgot-otp">OTP Code</label>
+        <input type="number" id="forgot-otp" placeholder="6-digit OTP code">
       </div>
       <div class="form-group">
-        <label for="new-pass">نیا پاسورڈ</label>
-        <input type="password" id="new-pass" placeholder="نیا پاسورڈ درج کریں">
+        <label for="new-pass">New Password</label>
+        <input type="password" id="new-pass" placeholder="Enter new password">
       </div>
-      <button class="btn btn-secondary" onclick="resetPassword()">پاسورڈ تبدیل کریں</button>
+      <button class="btn btn-secondary" onclick="resetPassword()">Update Password</button>
     </div>
 
-    <button class="link-btn" onclick="switchForm('login')">واپس لاگ ان پر جائیں</button>
+    <button class="link-btn" onclick="switchForm('login')">Back to Login</button>
   </div>
 
   <div id="recaptcha-container"></div>
@@ -389,7 +385,6 @@
     });
   };
 
-  // Kodular App کو ڈیٹا بھیجنے کا فنکشن
   function sendDataToApp(action, phone, userId, userName, userCity) {
     const data = {
       status: "success",
@@ -441,13 +436,13 @@
     document.getElementById('msg-box').innerText = '';
   }
 
-  // 1. لاگ ان لاجک
+  // 1. Login Functionality
   function handleLogin() {
     const phone = getFullPhone('login-phone');
     const pass = document.getElementById('login-pass').value.trim();
 
     if (!phone || !pass) {
-      showMsg('براہ کرم موبائل نمبر اور پاسورڈ دونوں درج کریں۔', true);
+      showMsg('Please enter both mobile number and password.', true);
       return;
     }
 
@@ -456,22 +451,20 @@
       if (snapshot.exists()) {
         const userData = snapshot.val();
         if (userData.password === pass) {
-          showMsg('کامیابی سے لاگ ان ہو گئے ہیں!');
-          
+          showMsg('Login successful!');
           sendDataToApp("login", phone, safePhone, userData.name, userData.city);
-          
         } else {
-          showMsg('پاسورڈ غلط ہے!', true);
+          showMsg('Incorrect password!', true);
         }
       } else {
-        showMsg('یہ نمبر رجسٹرڈ نہیں ہے۔ پہلے سائن اپ کریں۔', true);
+        showMsg('Number not registered. Please sign up first.', true);
       }
     }).catch(err => {
-      showMsg('خرابی: ' + err.message, true);
+      showMsg('Error: ' + err.message, true);
     });
   }
 
-  // 2. سائن اپ لاجک
+  // 2. Sign Up Functionality
   function sendSignupOTP() {
     const name = document.getElementById('signup-name').value.trim();
     const city = document.getElementById('signup-city').value;
@@ -480,23 +473,23 @@
     const passConfirm = document.getElementById('signup-pass-confirm').value.trim();
 
     if (!name) {
-      showMsg('براہ کرم اپنا پورا نام درج کریں۔', true);
+      showMsg('Please enter your full name.', true);
       return;
     }
     if (!city) {
-      showMsg('براہ کرم اپنے شہر کا انتخاب کریں۔', true);
+      showMsg('Please select your city.', true);
       return;
     }
     if (!phone) {
-      showMsg('براہ کرم 10 ہندسوں کا درست موبائل نمبر درج کریں۔', true);
+      showMsg('Please enter a valid 10-digit mobile number.', true);
       return;
     }
     if (!pass) {
-      showMsg('براہ کرم پاسورڈ درج کریں۔', true);
+      showMsg('Please enter a password.', true);
       return;
     }
     if (pass !== passConfirm) {
-      showMsg('پاسورڈز آپس میں میچ نہیں کر رہے!', true);
+      showMsg('Passwords do not match!', true);
       return;
     }
 
@@ -504,7 +497,7 @@
     
     db.ref('users/' + safePhone).once('value').then((snapshot) => {
       if (snapshot.exists()) {
-        showMsg('یہ نمبر پہلے سے موجود ہے۔ لاگ ان کریں۔', true);
+        showMsg('This number is already registered. Please login.', true);
       } else {
         const appVerifier = window.recaptchaVerifier;
         auth.signInWithPhoneNumber(phone, appVerifier)
@@ -512,9 +505,9 @@
             confirmationResultObj = result;
             document.getElementById('signup-otp-sec').classList.remove('hidden');
             document.getElementById('send-otp-btn').classList.add('hidden');
-            showMsg('موبائل نمبر پر OTP بھیج دیا گیا ہے۔');
+            showMsg('OTP sent to your mobile number.');
           }).catch((error) => {
-            showMsg('OTP بھیجنے میں ناکامی: ' + error.message, true);
+            showMsg('Failed to send OTP: ' + error.message, true);
           });
       }
     });
@@ -528,14 +521,13 @@
     const pass = document.getElementById('signup-pass').value.trim();
 
     if (!otp) {
-      showMsg('براہ کرم OTP درج کریں۔', true);
+      showMsg('Please enter the OTP.', true);
       return;
     }
 
     confirmationResultObj.confirm(otp).then((result) => {
       const safePhone = phone.replace(/[^0-9]/g, '');
       
-      // Realtime Database میں تمام معلومات محفوظ کرنا
       db.ref('users/' + safePhone).set({
         name: name,
         city: city,
@@ -543,27 +535,32 @@
         password: pass,
         createdAt: new Date().toISOString()
       }).then(() => {
-        showMsg('اکاؤنٹ کامیابی سے بن گیا ہے!');
+        showMsg('Account created successfully! Redirecting to login...');
         
-        sendDataToApp("signup", phone, safePhone, name, city);
+        // Automatic redirection to Login page
+        setTimeout(() => {
+          switchForm('login');
+          // Fill phone field on login form automatically
+          document.getElementById('login-phone').value = phone.replace('+92', '');
+        }, 1500);
       });
     }).catch((error) => {
-      showMsg('غلط OTP درج کیا گیا ہے۔', true);
+      showMsg('Invalid OTP entered.', true);
     });
   }
 
-  // 3. فارگیٹ پاسورڈ
+  // 3. Reset Password Functionality
   function sendForgotOTP() {
     const phone = getFullPhone('forgot-phone');
     if (!phone) {
-      showMsg('براہ کرم 10 ہندسوں کا درست موبائل نمبر درج کریں۔', true);
+      showMsg('Please enter a valid 10-digit mobile number.', true);
       return;
     }
 
     const safePhone = phone.replace(/[^0-9]/g, '');
     db.ref('users/' + safePhone).once('value').then((snapshot) => {
       if (!snapshot.exists()) {
-        showMsg('یہ نمبر رجسٹرڈ نہیں ہے۔', true);
+        showMsg('This number is not registered.', true);
       } else {
         const appVerifier = window.recaptchaVerifier;
         auth.signInWithPhoneNumber(phone, appVerifier)
@@ -571,9 +568,9 @@
             confirmationResultObj = result;
             document.getElementById('forgot-otp-sec').classList.remove('hidden');
             document.getElementById('forgot-otp-btn').classList.add('hidden');
-            showMsg('پاسورڈ ری سیٹ کے لیے OTP بھیج دیا گیا ہے۔');
+            showMsg('OTP sent for password reset.');
           }).catch((error) => {
-            showMsg('خطا: ' + error.message, true);
+            showMsg('Error: ' + error.message, true);
           });
       }
     });
@@ -585,7 +582,7 @@
     const phone = getFullPhone('forgot-phone');
 
     if (!otp || !newPass) {
-      showMsg('OTP اور نیا پاسورڈ دونوں درج کریں۔', true);
+      showMsg('Please enter both OTP and new password.', true);
       return;
     }
 
@@ -594,11 +591,11 @@
       db.ref('users/' + safePhone).update({
         password: newPass
       }).then(() => {
-        showMsg('پاسورڈ کامیابی سے تبدیل ہو گیا۔ سائن ان کریں۔');
+        showMsg('Password updated successfully! Redirecting to login...');
         setTimeout(() => switchForm('login'), 1500);
       });
     }).catch((error) => {
-      showMsg('غلط OTP درج کیا گیا ہے۔', true);
+      showMsg('Invalid OTP entered.', true);
     });
   }
 </script>
