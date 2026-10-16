@@ -1,604 +1,808 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr">
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Sign In / Sign Up</title>
-  
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    }
-    body {
-      background-color: #f4f6f9;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      padding: 10px;
-    }
-    .card {
-      background: #ffffff;
-      width: 100%;
-      max-width: 360px;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-      padding: 15px;
-    }
-    h2 {
-      text-align: center;
-      font-size: 20px;
-      color: #333;
-      margin-bottom: 12px;
-    }
-    .form-group {
-      margin-bottom: 8px;
-    }
-    label {
-      display: block;
-      font-size: 12px;
-      color: #555;
-      margin-bottom: 3px;
-    }
-    input, select {
-      width: 100%;
-      padding: 8px 10px;
-      font-size: 14px;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-      outline: none;
-      direction: ltr;
-      background-color: #fff;
-    }
-    input:focus, select:focus {
-      border-color: #007bff;
-    }
-    .phone-wrapper {
-      display: flex;
-      direction: ltr;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-      overflow: hidden;
-      background: #fff;
-    }
-    .phone-wrapper:focus-within {
-      border-color: #007bff;
-    }
-    .phone-prefix {
-      background-color: #e9ecef;
-      color: #495057;
-      padding: 8px 10px;
-      font-size: 14px;
-      font-weight: bold;
-      border-right: 1px solid #ccc;
-      user-select: none;
-      display: flex;
-      align-items: center;
-    }
-    .phone-wrapper input {
-      border: none;
-      border-radius: 0;
-      padding-left: 8px;
-    }
-    .btn {
-      width: 100%;
-      padding: 9px;
-      font-size: 14px;
-      font-weight: bold;
-      color: #fff;
-      background-color: #007bff;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      margin-top: 5px;
-    }
-    .btn-secondary {
-      background-color: #6c757d;
-    }
-    .link-btn {
-      background: none;
-      border: none;
-      color: #007bff;
-      font-size: 12px;
-      cursor: pointer;
-      display: block;
-      margin: 8px auto 0;
-      text-decoration: underline;
-    }
-    .hidden {
-      display: none;
-    }
-    .msg {
-      font-size: 12px;
-      text-align: center;
-      margin-top: 8px;
-    }
-    .msg.error { color: #d9534f; }
-    .msg.success { color: #5cb85c; }
-    #recaptcha-container {
-      margin-top: 5px;
-    }
-  </style>
-
-  <!-- Firebase Web SDKs (v8) -->
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
-</head>
-<body>
-
-<div class="card">
-  <!-- 1. Login Form -->
-  <div id="login-form">
-    <h2>Login</h2>
-    <div class="form-group">
-      <label>Mobile Number</label>
-      <div class="phone-wrapper">
-        <span class="phone-prefix">+92</span>
-        <input type="tel" id="login-phone" placeholder="3001234567" maxlength="10" oninput="validatePhoneInput(this)">
-      </div>
-    </div>
-    <div class="form-group">
-      <label for="login-pass">Password</label>
-      <input type="password" id="login-pass" placeholder="Enter password">
-    </div>
-    <button class="btn" onclick="handleLogin()">Sign In</button>
-    
-    <button class="link-btn" onclick="switchForm('forgot')">Forgot Password?</button>
-    <button class="link-btn" onclick="switchForm('signup')">Create New Account (Sign Up)</button>
-  </div>
-
-  <!-- 2. Sign Up Form -->
-  <div id="signup-form" class="hidden">
-    <h2>Create New Account</h2>
-    
-    <div class="form-group">
-      <label for="signup-name">Full Name</label>
-      <input type="text" id="signup-name" placeholder="Enter your full name">
-    </div>
-
-    <div class="form-group">
-      <label for="signup-city">Current City</label>
-      <select id="signup-city">
-        <option value="">-- Select City --</option>
-        <option value="Abbottabad">Abbottabad</option>
-        <option value="Arifwala">Arifwala</option>
-        <option value="Astore">Astore</option>
-        <option value="Attock">Attock</option>
-        <option value="Awaran">Awaran</option>
-        <option value="Badin">Badin</option>
-        <option value="Bahawalpur">Bahawalpur</option>
-        <option value="Bannu">Bannu</option>
-        <option value="Batkhela (Malakand)">Batkhela (Malakand)</option>
-        <option value="Bhakkar">Bhakkar</option>
-        <option value="Bhimber">Bhimber</option>
-        <option value="Chakwal">Chakwal</option>
-        <option value="Chaman">Chaman</option>
-        <option value="Charsadda">Charsadda</option>
-        <option value="Chilas">Chilas</option>
-        <option value="Chiniot">Chiniot</option>
-        <option value="Chitral">Chitral</option>
-        <option value="Dadu">Dadu</option>
-        <option value="Daska">Daska</option>
-        <option value="Dera Ghazi Khan">Dera Ghazi Khan</option>
-        <option value="Dera Ismail Khan">Dera Ismail Khan</option>
-        <option value="Dera Murad Jamali">Dera Murad Jamali</option>
-        <option value="Dir Lower (Timergara)">Dir Lower (Timergara)</option>
-        <option value="Dir Upper">Dir Upper</option>
-        <option value="Faisalabad">Faisalabad</option>
-        <option value="Fort Abbas">Fort Abbas</option>
-        <option value="Ghotki">Ghotki</option>
-        <option value="Gilgit">Gilgit</option>
-        <option value="Gujranwala">Gujranwala</option>
-        <option value="Gujrat">Gujrat</option>
-        <option value="Gwadar">Gwadar</option>
-        <option value="Hafizabad">Hafizabad</option>
-        <option value="Hangu">Hangu</option>
-        <option value="Haripur">Haripur</option>
-        <option value="Haroonabad">Haroonabad</option>
-        <option value="Hasilpur">Hasilpur</option>
-        <option value="Hunza (Karimabad)">Hunza (Karimabad)</option>
-        <option value="Hyderabad">Hyderabad</option>
-        <option value="Jacobabad">Jacobabad</option>
-        <option value="Jaffarabad">Jaffarabad</option>
-        <option value="Jamshoro">Jamshoro</option>
-        <option value="Jampur">Jampur</option>
-        <option value="Jhelum">Jhelum</option>
-        <option value="Kabirwala">Kabirwala</option>
-        <option value="Kallar Kahar">Kallar Kahar</option>
-        <option value="Kamoke">Kamoke</option>
-        <option value="Kandhkot">Kandhkot</option>
-        <option value="Karachi">Karachi</option>
-        <option value="Karak">Karak</option>
-        <option value="Kasur">Kasur</option>
-        <option value="Khairpur">Khairpur</option>
-        <option value="Khanewal">Khanewal</option>
-        <option value="Khanpur">Khanpur</option>
-        <option value="Kharian">Kharian</option>
-        <option value="Khaplu">Khaplu</option>
-        <option value="Kharan">Kharan</option>
-        <option value="Khipro">Khipro</option>
-        <option value="Khuzdar">Khuzdar</option>
-        <option value="Khyber (Jamrud)">Khyber (Jamrud)</option>
-        <option value="Killa Saifullah">Killa Saifullah</option>
-        <option value="Kohat">Kohat</option>
-        <option value="Kohistan">Kohistan</option>
-        <option value="Kot Addu">Kot Addu</option>
-        <option value="Kotri">Kotri</option>
-        <option value="Lahore">Lahore</option>
-        <option value="Lakki Marwat">Lakki Marwat</option>
-        <option value="Larkana">Larkana</option>
-        <option value="Lasbela (Hub)">Lasbela (Hub)</option>
-        <option value="Layyah">Layyah</option>
-        <option value="Lodhran">Lodhran</option>
-        <option value="Loralai">Loralai</option>
-        <option value="Mailsi">Mailsi</option>
-        <option value="Mansehra">Mansehra</option>
-        <option value="Mardan">Mardan</option>
-        <option value="Mastung">Mastung</option>
-        <option value="Matli">Matli</option>
-        <option value="Mianwali">Mianwali</option>
-        <option value="Mirpur Khas">Mirpur Khas</option>
-        <option value="Mirwah">Mirwah</option>
-        <option value="Mithi">Mithi</option>
-        <option value="Multan">Multan</option>
-        <option value="Murree">Murree</option>
-        <option value="Muzaffargarh">Muzaffargarh</option>
-        <option value="Nagar">Nagar</option>
-        <option value="Narowal">Narowal</option>
-        <option value="Nawabshah">Nawabshah</option>
-        <option value="Nowshera">Nowshera</option>
-        <option value="Okara">Okara</option>
-        <option value="Ormara">Ormara</option>
-        <option value="Pakpattan">Pakpattan</option>
-        <option value="Panjgur">Panjgur</option>
-        <option value="Parachinar (Kurram)">Parachinar (Kurram)</option>
-        <option value="Pasni">Pasni</option>
-        <option value="Peshawar">Peshawar</option>
-        <option value="Phalia">Phalia</option>
-        <option value="Quetta">Quetta</option>
-        <option value="Rahim Yar Khan">Rahim Yar Khan</option>
-        <option value="Rajanpur">Rajanpur</option>
-        <option value="Rawalpindi">Rawalpindi</option>
-        <option value="Sahiwal">Sahiwal</option>
-        <option value="Samundri">Samundri</option>
-        <option value="Sanghar">Sanghar</option>
-        <option value="Sargodha">Sargodha</option>
-        <option value="Sehwan Sharif">Sehwan Sharif</option>
-        <option value="Shahdadkot">Shahdadkot</option>
-        <option value="Shakargarh">Shakargarh</option>
-        <option value="Shangla">Shangla</option>
-        <option value="Sheikhupura">Sheikhupura</option>
-        <option value="Shigar">Shigar</option>
-        <option value="Shikarpur">Shikarpur</option>
-        <option value="Shorkot">Shorkot</option>
-        <option value="Sibi">Sibi</option>
-        <option value="Sialkot">Sialkot</option>
-        <option value="Skardu">Skardu</option>
-        <option value="Sukkur">Sukkur</option>
-        <option value="Sukkur Rohri">Sukkur Rohri</option>
-        <option value="Swabi">Swabi</option>
-        <option value="Swat (Mingora)">Swat (Mingora)</option>
-        <option value="Talagang">Talagang</option>
-        <option value="Tando Adam">Tando Adam</option>
-        <option value="Tando Allahyar">Tando Allahyar</option>
-        <option value="Tank">Tank</option>
-        <option value="Tharparkar">Tharparkar</option>
-        <option value="Thatta">Thatta</option>
-        <option value="Toba Tek Singh">Toba Tek Singh</option>
-        <option value="Turbat">Turbat</option>
-        <option value="Umerkot">Umerkot</option>
-        <option value="Vehari">Vehari</option>
-        <option value="Washuk">Washuk</option>
-        <option value="Wazirabad">Wazirabad</option>
-        <option value="Zhob">Zhob</option>
-        <option value="Ziarat">Ziarat</option>
-      </select>
-    </div>
-
-    <div class="form-group">
-      <label>Mobile Number</label>
-      <div class="phone-wrapper">
-        <span class="phone-prefix">+92</span>
-        <input type="tel" id="signup-phone" placeholder="3001234567" maxlength="10" oninput="validatePhoneInput(this)">
-      </div>
-    </div>
-
-    <div class="form-group">
-      <label for="signup-pass">Password</label>
-      <input type="password" id="signup-pass" placeholder="Create password">
-    </div>
-    <div class="form-group">
-      <label for="signup-pass-confirm">Confirm Password</label>
-      <input type="password" id="signup-pass-confirm" placeholder="Confirm password">
-    </div>
-    
-    <button class="btn" id="send-otp-btn" onclick="sendSignupOTP()">Send OTP</button>
-
-    <!-- OTP Section -->
-    <div id="signup-otp-sec" class="hidden">
-      <div class="form-group" style="margin-top: 8px;">
-        <label for="signup-otp">OTP Code</label>
-        <input type="number" id="signup-otp" placeholder="6-digit OTP code">
-      </div>
-      <button class="btn btn-secondary" onclick="verifySignupOTP()">Verify & Sign Up</button>
-    </div>
-
-    <button class="link-btn" onclick="switchForm('login')">Already have an account? Login</button>
-  </div>
-
-  <!-- 3. Forgot Password Form -->
-  <div id="forgot-form" class="hidden">
-    <h2>Reset Password</h2>
-    <div class="form-group">
-      <label>Mobile Number</label>
-      <div class="phone-wrapper">
-        <span class="phone-prefix">+92</span>
-        <input type="tel" id="forgot-phone" placeholder="3001234567" maxlength="10" oninput="validatePhoneInput(this)">
-      </div>
-    </div>
-    
-    <button class="btn" id="forgot-otp-btn" onclick="sendForgotOTP()">Send OTP</button>
-
-    <div id="forgot-otp-sec" class="hidden">
-      <div class="form-group" style="margin-top: 8px;">
-        <label for="forgot-otp">OTP Code</label>
-        <input type="number" id="forgot-otp" placeholder="6-digit OTP code">
-      </div>
-      <div class="form-group">
-        <label for="new-pass">New Password</label>
-        <input type="password" id="new-pass" placeholder="Enter new password">
-      </div>
-      <button class="btn btn-secondary" onclick="resetPassword()">Update Password</button>
-    </div>
-
-    <button class="link-btn" onclick="switchForm('login')">Back to Login</button>
-  </div>
-
-  <div id="recaptcha-container"></div>
-  <div id="msg-box" class="msg"></div>
-</div>
-
-<script>
-  const firebaseConfig = {
-    apiKey: "AIzaSyDhBSYrjhZMTtIQbGox7GRwyQgD_zpieAU",
-    authDomain: "e-services-1801a.firebaseapp.com",
-    databaseURL: "https://e-services-1801a-default-rtdb.firebaseio.com",
-    projectId: "e-services-1801a",
-    storageBucket: "e-services-1801a.firebasestorage.app",
-    messagingSenderId: "704425720967",
-    appId: "1:704425720967:android:805848215daebc79998c22"
-  };
-
-  firebase.initializeApp(firebaseConfig);
-  const auth = firebase.auth();
-  const db = firebase.database();
-
-  let confirmationResultObj = null;
-
-  window.onload = function() {
-    window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
-      'size': 'invisible'
-    });
-  };
-
-  function sendDataToApp(action, phone, userId, userName, userCity) {
-    const data = {
-      status: "success",
-      action: action,       
-      userId: userId,       
-      phone: phone,         
-      userName: userName || "",
-      userCity: userCity || ""
-    };
-    
-    if (window.AppInventor) {
-      window.AppInventor.setWebViewString(JSON.stringify(data));
-    }
-  }
-
-  function validatePhoneInput(input) {
-    input.value = input.value.replace(/[^0-9]/g, '');
-    if (input.value.length > 10) {
-      input.value = input.value.slice(0, 10);
-    }
-  }
-
-  function getFullPhone(inputId) {
-    const rawDigits = document.getElementById(inputId).value.trim();
-    if (rawDigits.length !== 10) {
-      return null;
-    }
-    return '+92' + rawDigits;
-  }
-
-  function switchForm(form) {
-    clearMessages();
-    document.getElementById('login-form').classList.add('hidden');
-    document.getElementById('signup-form').classList.add('hidden');
-    document.getElementById('forgot-form').classList.add('hidden');
-
-    if (form === 'login') document.getElementById('login-form').classList.remove('hidden');
-    if (form === 'signup') document.getElementById('signup-form').classList.remove('hidden');
-    if (form === 'forgot') document.getElementById('forgot-form').classList.remove('hidden');
-  }
-
-  function showMsg(text, isError = false) {
-    const msgBox = document.getElementById('msg-box');
-    msgBox.innerText = text;
-    msgBox.className = 'msg ' + (isError ? 'error' : 'success');
-  }
-
-  function clearMessages() {
-    document.getElementById('msg-box').innerText = '';
-  }
-
-  // 1. Login Functionality
-  function handleLogin() {
-    const phone = getFullPhone('login-phone');
-    const pass = document.getElementById('login-pass').value.trim();
-
-    if (!phone || !pass) {
-      showMsg('Please enter both mobile number and password.', true);
-      return;
-    }
-
-    const safePhone = phone.replace(/[^0-9]/g, '');
-    db.ref('users/' + safePhone).once('value').then((snapshot) => {
-      if (snapshot.exists()) {
-        const userData = snapshot.val();
-        if (userData.password === pass) {
-          showMsg('Login successful!');
-          sendDataToApp("login", phone, safePhone, userData.name, userData.city);
-        } else {
-          showMsg('Incorrect password!', true);
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Services Control Center - Government Jobs</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght=400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; height: 100vh; overflow: hidden; }
+        .tab-content { display: none; }
+        .tab-content.active { display: flex; flex-direction: column; flex-grow: 1; }
+        .animated-bg {
+            background: linear-gradient(-45deg, #f1f5f9, #e2e8f0, #f8fafc, #f1f5f9);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
         }
-      } else {
-        showMsg('Number not registered. Please sign up first.', true);
-      }
-    }).catch(err => {
-      showMsg('Error: ' + err.message, true);
-    });
-  }
-
-  // 2. Sign Up Functionality
-  function sendSignupOTP() {
-    const name = document.getElementById('signup-name').value.trim();
-    const city = document.getElementById('signup-city').value;
-    const phone = getFullPhone('signup-phone');
-    const pass = document.getElementById('signup-pass').value.trim();
-    const passConfirm = document.getElementById('signup-pass-confirm').value.trim();
-
-    if (!name) {
-      showMsg('Please enter your full name.', true);
-      return;
-    }
-    if (!city) {
-      showMsg('Please select your city.', true);
-      return;
-    }
-    if (!phone) {
-      showMsg('Please enter a valid 10-digit mobile number.', true);
-      return;
-    }
-    if (!pass) {
-      showMsg('Please enter a password.', true);
-      return;
-    }
-    if (pass !== passConfirm) {
-      showMsg('Passwords do not match!', true);
-      return;
-    }
-
-    const safePhone = phone.replace(/[^0-9]/g, '');
-    
-    db.ref('users/' + safePhone).once('value').then((snapshot) => {
-      if (snapshot.exists()) {
-        showMsg('This number is already registered. Please login.', true);
-      } else {
-        const appVerifier = window.recaptchaVerifier;
-        auth.signInWithPhoneNumber(phone, appVerifier)
-          .then((result) => {
-            confirmationResultObj = result;
-            document.getElementById('signup-otp-sec').classList.remove('hidden');
-            document.getElementById('send-otp-btn').classList.add('hidden');
-            showMsg('OTP sent to your mobile number.');
-          }).catch((error) => {
-            showMsg('Failed to send OTP: ' + error.message, true);
-          });
-      }
-    });
-  }
-
-  function verifySignupOTP() {
-    const otp = document.getElementById('signup-otp').value.trim();
-    const name = document.getElementById('signup-name').value.trim();
-    const city = document.getElementById('signup-city').value;
-    const phone = getFullPhone('signup-phone');
-    const pass = document.getElementById('signup-pass').value.trim();
-
-    if (!otp) {
-      showMsg('Please enter the OTP.', true);
-      return;
-    }
-
-    confirmationResultObj.confirm(otp).then((result) => {
-      const safePhone = phone.replace(/[^0-9]/g, '');
-      
-      db.ref('users/' + safePhone).set({
-        name: name,
-        city: city,
-        phone: phone,
-        password: pass,
-        createdAt: new Date().toISOString()
-      }).then(() => {
-        showMsg('Account created successfully! Redirecting to login...');
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
         
-        // Automatic redirection to Login page
-        setTimeout(() => {
-          switchForm('login');
-          // Fill phone field on login form automatically
-          document.getElementById('login-phone').value = phone.replace('+92', '');
-        }, 1500);
-      });
-    }).catch((error) => {
-      showMsg('Invalid OTP entered.', true);
-    });
-  }
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 38px;
+            height: 20px;
+        }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider {
+            position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #cbd5e1; transition: .3s; border-radius: 20px;
+        }
+        .slider:before {
+            position: absolute; content: ""; height: 14px; width: 14px; left: 3px; bottom: 3px;
+            background-color: white; transition: .3s; border-radius: 50%;
+        }
+        input:checked + .slider { background-color: #10b981; }
+        input:checked + .slider:before { transform: translateX(18px); }
 
-  // 3. Reset Password Functionality
-  function sendForgotOTP() {
-    const phone = getFullPhone('forgot-phone');
-    if (!phone) {
-      showMsg('Please enter a valid 10-digit mobile number.', true);
-      return;
-    }
+        /* Progress Bar Animation */
+        @keyframes progressLoading {
+            0% { width: 0%; left: 0; }
+            50% { width: 70%; left: 15%; }
+            100% { width: 100%; left: 0; }
+        }
+        .progress-bar-line {
+            animation: progressLoading 1.5s infinite ease-in-out;
+        }
+    </style>
+</head>
+<body class="animated-bg text-slate-800 antialiased flex flex-col justify-between m-0 p-0">
 
-    const safePhone = phone.replace(/[^0-9]/g, '');
-    db.ref('users/' + safePhone).once('value').then((snapshot) => {
-      if (!snapshot.exists()) {
-        showMsg('This number is not registered.', true);
-      } else {
-        const appVerifier = window.recaptchaVerifier;
-        auth.signInWithPhoneNumber(phone, appVerifier)
-          .then((result) => {
-            confirmationResultObj = result;
-            document.getElementById('forgot-otp-sec').classList.remove('hidden');
-            document.getElementById('forgot-otp-btn').classList.add('hidden');
-            showMsg('OTP sent for password reset.');
-          }).catch((error) => {
-            showMsg('Error: ' + error.message, true);
-          });
-      }
-    });
-  }
+    <!-- Global ProgressBar Indicator -->
+    <div id="globalProgressBar" class="fixed top-0 left-0 right-0 z-50 h-1 bg-slate-200 hidden">
+        <div class="h-full bg-blue-600 progress-bar-line rounded-full"></div>
+    </div>
 
-  function resetPassword() {
-    const otp = document.getElementById('forgot-otp').value.trim();
-    const newPass = document.getElementById('new-pass').value.trim();
-    const phone = getFullPhone('forgot-phone');
+    <div id="expiryModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-xl shadow-2xl border border-rose-200 p-5 max-w-md w-full text-center">
+            <div class="bg-rose-100 text-rose-600 w-12 h-12 rounded-full flex items-center justify-center text-xl mx-auto mb-3 font-bold">⚠️</div>
+            <h2 class="text-base font-bold text-slate-900 mb-1">Job Application Date Expired!</h2>
+            <p id="expiryMessage" class="text-xs text-slate-600 mb-4 px-2 leading-relaxed">
+                The deadline for Job ID <span class="font-bold text-rose-600 font-mono" id="expJobId">---</span> (<span class="font-bold text-slate-800" id="expJobTitle">---</span>) has passed. Please edit the date or delete this job.
+            </p>
+            <div class="bg-slate-50 p-3 rounded-lg border border-slate-200 mb-4">
+                <label class="block text-[11px] font-bold text-slate-500 text-left mb-1 uppercase tracking-wide">Select New Last Date:</label>
+                <div class="flex gap-2">
+                    <input type="date" id="newExpiryDate" class="flex-grow px-3 py-1.5 border border-slate-300 rounded-md text-xs font-semibold outline-none focus:ring-1 focus:ring-blue-500">
+                    <button onclick="updateExpiredJobDate()" class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold px-3 py-1.5 rounded-md transition shadow-sm">Update Date</button>
+                </div>
+            </div>
+            <div class="flex gap-2 justify-between">
+                <button onclick="deleteExpiredJob()" class="bg-rose-50 border border-rose-200 hover:bg-rose-100 text-rose-600 font-semibold py-1.5 px-4 rounded-lg text-xs transition">Delete Job</button>
+                <button onclick="closeExpiryModal()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold py-1.5 px-4 rounded-lg text-xs transition">Close</button>
+            </div>
+        </div>
+    </div>
 
-    if (!otp || !newPass) {
-      showMsg('Please enter both OTP and new password.', true);
-      return;
-    }
+    <div id="customNotification" class="fixed top-5 left-1/2 transform -translate-x-1/2 bg-emerald-600 text-white px-6 py-3 rounded-xl shadow-2xl font-semibold text-sm tracking-wide z-50 flex items-center gap-2 opacity-0 pointer-events-none transition-all duration-300">
+        <span class="w-2 h-2 rounded-full bg-white animate-ping"></span>
+        Job is Live Now
+    </div>
 
-    confirmationResultObj.confirm(otp).then((result) => {
-      const safePhone = phone.replace(/[^0-9]/g, '');
-      db.ref('users/' + safePhone).update({
-        password: newPass
-      }).then(() => {
-        showMsg('Password updated successfully! Redirecting to login...');
-        setTimeout(() => switchForm('login'), 1500);
-      });
-    }).catch((error) => {
-      showMsg('Invalid OTP entered.', true);
-    });
-  }
-</script>
+    <!-- Login Overlay -->
+    <div id="loginOverlay" class="fixed inset-0 bg-slate-900/90 backdrop-blur-md z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-xl shadow-2xl border border-slate-200 p-6 max-w-sm w-full text-center">
+            <div class="bg-blue-600 w-50 h-12 rounded-lg flex items-center justify-center text-white font-bold text-xl mx-auto mb-3">E-Services</div>
+            <h2 class="text-xl font-bold text-slate-900 mb-1">Government Jobs Access</h2>
+            <p class="text-xs text-slate-500 mb-4">Enter Mobile Number and Password to Login</p>
+            <form onsubmit="verifyAuth(event)" class="space-y-3">
+                <input type="text" id="mobileInput" placeholder="Mobile Number (e.g. 03001234567)" required class="w-full px-3 py-2 border rounded-lg text-sm outline-none focus:ring-1 focus:ring-blue-500 text-center font-mono">
+                <input type="password" id="passInput" placeholder="Password" required class="w-full px-3 py-2 border rounded-lg text-sm outline-none focus:ring-1 focus:ring-blue-500 text-center font-mono">
+                <button type="submit" id="loginBtn" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-semibold py-2 rounded-lg text-sm transition">Authenticate</button>
+            </form>
+        </div>
+    </div>
 
+    <header class="bg-slate-900 text-white px-4 py-2 flex justify-between items-center w-full shadow-sm shrink-0">
+        <div class="flex items-center gap-2">
+            <div class="bg-blue-600 px-2 py-0.5 rounded font-bold text-sm tracking-wider">E-Services</div>
+            <div>
+                <h1 class="text-sm font-bold tracking-tight">Government Jobs Admin Panel</h1>
+            </div>
+        </div>
+        <span class="inline-flex items-center gap-1 bg-emerald-950 text-emerald-400 text-[10px] font-medium px-2 py-0.5 rounded border border-emerald-800">
+            <span class="h-1.5 w-1.5 rounded-full bg-emerald-400"></span> Live Mode
+        </span>
+    </header>
+
+    <nav class="bg-white border-b border-slate-200 w-full flex shrink-0 shadow-sm">
+        <button onclick="switchTab('add-job-tab', this)" class="tab-btn flex-1 py-2 text-center text-xs font-semibold text-blue-600 border-b-2 border-blue-600 focus:outline-none transition-all hover:bg-slate-50">
+            Add New Job
+        </button>
+        <button onclick="switchTab('manage-jobs-tab', this)" class="tab-btn flex-1 py-2 text-center text-xs font-semibold text-slate-500 border-b-2 border-transparent focus:outline-none transition-all hover:text-slate-800 hover:bg-slate-50">
+            Manage Existing Jobs
+        </button>
+        <button onclick="switchTab('my-income-tab', this); loadMyIncome();" class="tab-btn flex-1 py-2 text-center text-xs font-semibold text-slate-500 border-b-2 border-transparent focus:outline-none transition-all hover:text-slate-800 hover:bg-slate-50">
+            My Income
+        </button>
+    </nav>
+
+    <main class="flex-grow w-full p-3 overflow-hidden flex flex-col">
+        
+        <div id="add-job-tab" class="tab-content active justify-center overflow-auto">
+            <div class="bg-white/90 backdrop-blur-sm rounded-xl border border-slate-200 shadow-sm max-w-4xl mx-auto p-4 w-full">
+                <!-- ڈپلیکیشن الرٹ کا پیغام ظاہر کرنے کے لیے باکس -->
+                <div id="duplicateWarning" class="hidden mb-3 p-3 bg-amber-50 border border-amber-300 rounded-lg text-amber-800 text-xs flex items-center justify-between">
+                    <div>
+                        <span class="font-bold">⚠️ خبردار (Duplicate Warning):</span>
+                        <span id="duplicateWarningText">یہ جاب پہلے سے ڈیٹا بیس میں موجود ہے!</span>
+                    </div>
+                    <button type="button" onclick="document.getElementById('duplicateWarning').classList.add('hidden')" class="text-amber-800 font-bold px-2">✕</button>
+                </div>
+
+                <form id="jobForm" onsubmit="saveJob(event)" class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+                    <input type="hidden" id="editJobId">
+                    <input type="hidden" id="editJobStatus">
+
+                    <div class="md:col-span-2">
+                        <label class="block font-medium text-slate-600 mb-1">Auto-Generated ID:</label>
+                        <input type="text" id="jobId" readonly class="w-full px-3 py-1 bg-slate-50 border border-slate-200 text-slate-500 rounded-lg outline-none font-mono font-bold" placeholder="Generating ID...">
+                    </div>
+
+                    <div>
+                        <label class="block font-medium text-slate-600 mb-1">Platform:</label>
+                        <input type="text" id="platform" placeholder="e.g. FPSC, PPSC, NTS, Direct" class="w-full px-3 py-1.5 border border-slate-300 rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none uppercase font-medium">
+                    </div>
+
+                    <div>
+                        <label class="block font-medium text-slate-600 mb-1">Job Title / Vacancy Name:</label>
+                        <input type="text" id="jobTitle" oninput="checkForDuplicates()" placeholder="e.g. Assistant Director" class="w-full px-3 py-1.5 border border-slate-300 rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none font-medium">
+                    </div>
+
+                    <div>
+                        <label class="block font-medium text-slate-600 mb-1">Department:</label>
+                        <input type="text" id="department" oninput="checkForDuplicates()" placeholder="e.g. Ministry of Defence" class="w-full px-3 py-1.5 border border-slate-300 rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none">
+                    </div>
+
+                    <div>
+                        <label class="block font-medium text-slate-600 mb-1">Location:</label>
+                        <input type="text" id="location" placeholder="e.g. Islamabad, All Pakistan, Lahore" class="w-full px-3 py-1.5 border border-slate-300 rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none font-medium">
+                    </div>
+
+                    <div>
+                        <label class="block font-medium text-slate-600 mb-1">Qualification / Eligibility:</label>
+                        <input type="text" id="education" placeholder="e.g. Bachelor / Master" class="w-full px-3 py-1.5 border border-slate-300 rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none">
+                    </div>
+
+                    <div>
+                        <label class="block font-medium text-slate-600 mb-1">Experience:</label>
+                        <input type="text" id="experience" placeholder="e.g. Fresh or 2 years experience" class="w-full px-3 py-1.5 border border-slate-300 rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none">
+                    </div>
+
+                    <div>
+                        <label class="block font-medium text-slate-600 mb-1">Last Date to Apply:</label>
+                        <input type="date" id="lastDate" class="w-full px-3 py-1.5 border border-slate-300 rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none font-medium">
+                    </div>
+
+                    <div>
+                        <label class="block font-medium text-slate-600 mb-1">Challan Fee (PKR):</label>
+                        <input type="text" id="challanFee" placeholder="e.g. 0 or 600" class="w-full px-3 py-1.5 border border-slate-300 rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none">
+                    </div>
+
+                    <div>
+                        <label class="block font-medium text-slate-600 mb-1">Processing Fee (PKR):</label>
+                        <input type="text" id="jobFee" placeholder="e.g. 300" class="w-full px-3 py-1.5 border border-slate-300 rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none">
+                    </div>
+                    
+                    <div class="md:col-span-2">
+                        <label class="block font-medium text-slate-600 mb-1">Alert Message:</label>
+                        <textarea id="alertMessage" rows="2" placeholder="Enter alert or warning details here..." class="w-full px-3 py-1 border border-slate-300 rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none"></textarea>
+                    </div>
+
+                    <div class="md:col-span-2 pt-2 border-t border-slate-100 flex gap-2 justify-end">
+                        <button type="button" id="cancelEditBtn" onclick="resetForm()" class="hidden bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold py-1.5 px-4 rounded-lg transition text-xs">Cancel</button>
+                        <button type="submit" id="submitBtn" class="bg-slate-900 hover:bg-slate-800 text-white font-semibold py-1.5 px-6 rounded-lg shadow-sm transition text-xs">Save Record</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div id="manage-jobs-tab" class="tab-content overflow-hidden">
+            <div class="bg-white/90 backdrop-blur-sm rounded-xl border border-slate-200 shadow-sm w-full flex flex-col flex-grow overflow-hidden">
+                <div class="px-4 py-2 border-b border-slate-200 bg-slate-50/50 flex justify-between items-center shrink-0">
+                    <p class="text-xs text-slate-500 font-medium">Live Government Jobs Overview</p>
+                    <div class="flex items-center gap-2">
+                        <span class="inline-flex items-center gap-1 bg-slate-200 text-slate-800 text-[11px] font-bold px-2 py-1 rounded border border-slate-300 shadow-sm">
+                            Total Active Govt Jobs: <span id="totalActiveJobsCount" class="text-blue-600 font-mono ml-1">0</span>
+                        </span>
+                        <button onclick="loadJobs()" class="bg-white hover:bg-slate-100 text-slate-700 text-[11px] font-medium py-1 px-3 border border-slate-300 rounded shadow-sm transition">🔄 Refresh</button>
+                    </div>
+                </div>
+                
+                <div class="overflow-auto flex-grow w-full relative">
+                    <!-- Table Loading Progress Indicator -->
+                    <div id="tableProgressBar" class="absolute inset-x-0 top-0 h-1 bg-blue-100 hidden">
+                        <div class="h-full bg-blue-600 progress-bar-line rounded-full"></div>
+                    </div>
+
+                    <table class="w-full text-left border-collapse">
+                        <thead class="sticky top-0 z-10 bg-slate-900 text-white text-[11px] uppercase tracking-wider font-semibold">
+                            <tr>
+                                <th class="px-3 py-2 text-center">Job ID</th>
+                                <th class="px-3 py-2 text-left">Job Title</th>
+                                <th class="px-3 py-2 text-left">Department</th>
+                                <th class="px-3 py-2 text-center">Location</th>
+                                <th class="px-3 py-2 text-center">Qualification</th>
+                                <th class="px-3 py-2 text-center">Chal. Fee</th>
+                                <th class="px-3 py-2 text-center">Proc. Fee</th>
+                                <th class="px-3 py-2 text-center">Last Date</th>
+                                <th class="px-3 py-2 text-center">Actions / Status Switch</th>
+                            </tr>
+                        </thead>
+                        <tbody id="jobsTableBody" class="text-slate-700 divide-y divide-slate-200 text-xs font-medium">
+                            <tr>
+                                <td colspan="9" class="text-center py-6 text-slate-400">Fetching records...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div id="my-income-tab" class="tab-content overflow-hidden">
+            <div class="bg-white/90 backdrop-blur-sm rounded-xl border border-slate-200 shadow-sm w-full flex flex-col flex-grow overflow-hidden">
+                <div class="px-4 py-2 border-b border-slate-200 bg-slate-50/50 flex justify-between items-center shrink-0">
+                    <p class="text-xs text-slate-500 font-medium" id="shareHeaderTitle">My Earning Overview</p>
+                    <div class="flex items-center gap-2">
+                        <span class="inline-flex items-center gap-1 bg-emerald-100 text-emerald-800 text-[11px] font-bold px-3 py-1 rounded border border-emerald-300 shadow-sm">
+                            Total Income: PKR <span id="totalIncomeSum" class="text-emerald-700 font-mono ml-1">0</span>
+                        </span>
+                        <button onclick="loadMyIncome()" class="bg-white hover:bg-slate-100 text-slate-700 text-[11px] font-medium py-1 px-3 border border-slate-300 rounded shadow-sm transition">🔄 Refresh</button>
+                    </div>
+                </div>
+                
+                <div class="overflow-auto flex-grow w-full">
+                    <table class="w-full text-left border-collapse">
+                        <thead class="sticky top-0 z-10 bg-slate-900 text-white text-[11px] uppercase tracking-wider font-semibold">
+                            <tr>
+                                <th class="px-3 py-2 text-center">Sr. No</th>
+                                <th class="px-3 py-2 text-center">Order No</th>
+                                <th class="px-3 py-2 text-center">Completion Date</th>
+                                <th class="px-3 py-2 text-center">Generated Income (PKR)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="incomeTableBody" class="text-slate-700 divide-y divide-slate-200 text-xs font-medium">
+                            <tr>
+                                <td colspan="4" class="text-center py-6 text-slate-400">Fetching earnings...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <footer class="bg-white/80 border-t border-slate-200 px-4 py-1 text-center text-[10px] text-slate-400 w-full shrink-0">
+        &copy; 2026 Hussain E-Services Portal.
+    </footer>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyDhBSYrjhZMTtIQbGox7GRwyQgD_zpieAU",
+            databaseURL: "https://e-services-1801a-default-rtdb.firebaseio.com",
+            projectId: "e-services-1801a",
+            storageBucket: "e-services-1801a.firebasestorage.app"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+        const auth = firebase.auth();
+
+        let notificationTimeout;
+        let activeExpiredJobs = []; 
+        let currentUserMobile = "";
+        
+        let localJobsCache = {};
+
+        function showProgressBar() {
+            document.getElementById('globalProgressBar').classList.remove('hidden');
+            const tableBar = document.getElementById('tableProgressBar');
+            if(tableBar) tableBar.classList.remove('hidden');
+        }
+
+        function hideProgressBar() {
+            document.getElementById('globalProgressBar').classList.add('hidden');
+            const tableBar = document.getElementById('tableProgressBar');
+            if(tableBar) tableBar.classList.add('hidden');
+        }
+
+        function verifyAuth(e) {
+            e.preventDefault();
+            const mobileInput = document.getElementById('mobileInput').value.trim();
+            const passInput = document.getElementById('passInput').value.trim();
+            const loginBtn = document.getElementById('loginBtn');
+
+            if(!mobileInput || !passInput) {
+                alert("Please enter both Mobile Number and Password.");
+                return;
+            }
+
+            loginBtn.innerText = "Authenticating... Plz Wait";
+            loginBtn.disabled = true;
+            showProgressBar();
+
+            const formattedEmail = mobileInput + "@gmail.com";
+
+            auth.signInWithEmailAndPassword(formattedEmail, passInput)
+                .then((userCredential) => {
+                    database.ref('Users/' + mobileInput).once('value', (snapshot) => {
+                        loginBtn.innerText = "Authenticate";
+                        loginBtn.disabled = false;
+                        hideProgressBar();
+
+                        const userData = snapshot.val();
+                        if (userData) {
+                            const accountType = (userData.AccountType || userData.UserType || "").toString().toLowerCase();
+                            if (accountType === 'administrator' || accountType === 'admin' || accountType === 'researcher' || accountType === 'worker') {
+                                currentUserMobile = mobileInput;
+                                document.getElementById('loginOverlay').remove();
+                                getLatestJobId();
+                                loadJobs();
+                            } else {
+                                auth.signOut();
+                                alert("آپ اس پورٹل پر لاگ ان نہیں کرسکتے کیونکہ آپ اوتھرائزڈ نہیں ہیں۔");
+                            }
+                        } else {
+                            auth.signOut();
+                            alert("آپ اس پورٹل پر لاگ ان نہیں کرسکتے کیونکہ آپ اوتھرائزڈ نہیں ہیں۔");
+                        }
+                    }, (error) => {
+                        loginBtn.innerText = "Authenticate";
+                        loginBtn.disabled = false;
+                        hideProgressBar();
+                        auth.signOut();
+                        alert("Error verifying account status: " + error.message);
+                    });
+                })
+                .catch((error) => {
+                    loginBtn.innerText = "Authenticate";
+                    loginBtn.disabled = false;
+                    hideProgressBar();
+                    alert("Authentication Failed: Invalid Credentials!");
+                });
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            ['mousemove', 'keydown', 'mousedown'].forEach(evt => {
+                window.addEventListener(evt, () => {
+                    const notify = document.getElementById('customNotification');
+                    if (!notify.classList.contains('pointer-events-none')) {
+                        hideNotification();
+                    }
+                });
+            });
+        });
+
+        function showLiveNotification() {
+            const notify = document.getElementById('customNotification');
+            notify.classList.remove('opacity-0', 'pointer-events-none');
+            document.getElementById('platform').focus();
+            clearTimeout(notificationTimeout);
+            notificationTimeout = setTimeout(hideNotification, 2000);
+        }
+
+        function hideNotification() {
+            const notify = document.getElementById('customNotification');
+            notify.classList.add('opacity-0', 'pointer-events-none');
+            clearTimeout(notificationTimeout);
+        }
+
+        function switchTab(tabId, button) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('text-blue-600', 'border-blue-600');
+                btn.classList.add('text-slate-500', 'border-transparent');
+            });
+            document.getElementById(tabId).classList.add('active');
+            button.classList.remove('text-slate-500', 'border-transparent');
+            button.classList.add('text-blue-600', 'border-blue-600');
+        }
+
+        function getLatestJobId() {
+            if(document.getElementById('editJobId').value) return; 
+            showProgressBar();
+            database.ref('Jobs/GovtSector').once('value', (snapshot) => {
+                hideProgressBar();
+                let data = snapshot.val();
+                let nextNum = 101; 
+                if (data) {
+                    let keys = Object.keys(data);
+                    let nums = [];
+                    keys.forEach(k => {
+                        let numPart = k.replace(/^Govt/i, '');
+                        let n = parseInt(numPart, 10);
+                        if (!isNaN(n)) {
+                            nums.push(n);
+                        }
+                    });
+
+                    if (nums.length > 0) {
+                        let maxNum = Math.max(...nums);
+                        nextNum = maxNum >= 101 ? maxNum + 1 : 101;
+                    }
+                }
+                document.getElementById('jobId').value = "Govt" + nextNum;
+            }, () => hideProgressBar());
+        }
+
+        function convertDateToDB(dateString) {
+            if(!dateString) return "";
+            const parts = dateString.split('-');
+            if(parts.length === 3) {
+                return `${parts[2]}-${parts[1]}-${parts[0]}`;
+            }
+            return dateString;
+        }
+
+        function convertDateToInput(dateString) {
+            if(!dateString) return "";
+            const parts = dateString.split('-');
+            if(parts.length === 3) {
+                return `${parts[2]}-${parts[1]}-${parts[0]}`;
+            }
+            return dateString;
+        }
+
+        function checkForDuplicates() {
+            const title = document.getElementById('jobTitle').value.toLowerCase().trim();
+            const dept = document.getElementById('department').value.toLowerCase().trim();
+            const editingJobId = document.getElementById('editJobId').value;
+            const warningBox = document.getElementById('duplicateWarning');
+            const warningText = document.getElementById('duplicateWarningText');
+
+            if (!title) {
+                warningBox.classList.add('hidden');
+                return;
+            }
+
+            const sanitize = (str) => (str || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+
+            const cleanTitle = sanitize(title);
+            const cleanDept = sanitize(dept);
+
+            let duplicateFound = null;
+
+            for (let jobId in localJobsCache) {
+                if (editingJobId && jobId === editingJobId) continue;
+
+                let job = localJobsCache[jobId];
+                let itemTitle = sanitize(job.Title);
+                let itemDept = sanitize(job.Department);
+
+                if (itemTitle === cleanTitle && (cleanDept && itemDept === cleanDept)) {
+                    duplicateFound = { ...job, id: jobId, matchType: "Exact Match (Same Title & Department)" };
+                    break;
+                }
+
+                if (itemTitle === cleanTitle && cleanDept && itemDept.includes(cleanDept)) {
+                    duplicateFound = { ...job, id: jobId, matchType: "Similar Title & Department" };
+                    break;
+                }
+            }
+
+            if (duplicateFound) {
+                warningText.innerHTML = `ملتی جلتی جاب پہلے سے موجود ہے! <b>(ID: ${duplicateFound.id})</b> - <i>${duplicateFound.Title}</i> [${duplicateFound.Department || 'N/A'}]`;
+                warningBox.classList.remove('hidden');
+            } else {
+                warningBox.classList.add('hidden');
+            }
+        }
+
+        function saveJob(e) {
+            e.preventDefault();
+            showProgressBar();
+            let platformInput = document.getElementById('platform').value.trim().toUpperCase();
+            let jobId = document.getElementById('jobId').value;
+            let jobTitle = document.getElementById('jobTitle').value;
+            let department = document.getElementById('department').value;
+            let location = document.getElementById('location').value;
+            let education = document.getElementById('education').value;
+            let experience = document.getElementById('experience').value;
+            let lastDateInput = document.getElementById('lastDate').value;
+            
+            let jobFee = document.getElementById('jobFee').value.trim() !== "" ? document.getElementById('jobFee').value.trim() : "0";
+            let challanFee = document.getElementById('challanFee').value.trim() !== "" ? document.getElementById('challanFee').value.trim() : "0";
+            
+            let alertMsg = document.getElementById('alertMessage').value;
+
+            let lastDateFormatted = convertDateToDB(lastDateInput);
+
+            let isEditMode = document.getElementById('editJobId').value !== "";
+            let targetJobId = isEditMode ? document.getElementById('editJobId').value : jobId;
+            let jobStatus = isEditMode ? (document.getElementById('editJobStatus').value || "Active") : "Active";
+
+            const today = new Date();
+            const dd = String(today.getDate()).padStart(2, '0');
+            const mm = String(today.getMonth() + 1).padStart(2, '0'); 
+            const yyyy = today.getFullYear();
+            const currentPostDate = `${dd}-${mm}-${yyyy}`;
+
+            database.ref('Jobs/GovtSector/' + targetJobId).set({
+                Platform: platformInput,
+                Title: jobTitle,
+                Department: department,
+                Location: location,
+                Education: education,
+                Experience: experience,
+                LastDate: lastDateFormatted,
+                ProcessingFee: jobFee,
+                ChallanFee: challanFee,
+                Alert: alertMsg,
+                Status: jobStatus,
+                PostDate: currentPostDate,
+                Researcher: currentUserMobile
+            }, (error) => {
+                hideProgressBar();
+                if (!error) {
+                    resetForm();
+                    loadJobs();
+                    showLiveNotification();
+                    if(isEditMode) {
+                        switchTab('manage-jobs-tab', document.querySelectorAll('.tab-btn')[1]);
+                    }
+                }
+            });
+        }
+
+        function checkIfDateExpired(dbDateStr) {
+            if (!dbDateStr) return false;
+            const parts = dbDateStr.split('-');
+            if (parts.length === 3) {
+                const jobDate = new Date(parts[2], parts[1] - 1, parts[0]);
+                const today = new Date();
+                today.setHours(0, 0, 0, 0); 
+                return jobDate < today;
+            }
+            return false;
+        }
+
+        function loadJobs() {
+            const tableBody = document.getElementById('jobsTableBody');
+            const counterBadge = document.getElementById('totalActiveJobsCount');
+            
+            showProgressBar();
+            database.ref('Jobs/GovtSector').on('value', (snapshot) => {
+                hideProgressBar();
+                tableBody.innerHTML = "";
+                let data = snapshot.val();
+                localJobsCache = data || {};
+                let currentActiveCount = 0;
+                activeExpiredJobs = []; 
+
+                if(!data) {
+                    tableBody.innerHTML = `<tr><td colspan="9" class="text-center py-6 text-slate-400">No Govt sector jobs found.</td></tr>`;
+                    counterBadge.innerText = "0";
+                    return;
+                }
+
+                for (let jobId in data) {
+                    let job = data[jobId];
+                    
+                    if (job.Status === "Active") {
+                        currentActiveCount++;
+                        if (checkIfDateExpired(job.LastDate)) {
+                            activeExpiredJobs.push({ id: jobId, title: job.Title });
+                        }
+                    }
+
+                    let isChecked = (job.Status === "Active") ? "checked" : "";
+
+                    let row = document.createElement('tr');
+                    row.className = "hover:bg-slate-50 text-[11px] border-b border-slate-100";
+                    row.innerHTML = `
+                        <td class="px-3 py-1 text-center font-mono text-slate-500">${jobId}</td>
+                        <td class="px-3 py-1 text-slate-900 font-semibold">${job.Title || ''}</td>
+                        <td class="px-3 py-1 text-slate-600">${job.Department || ''}</td>
+                        <td class="px-3 py-1 text-center"><span class="bg-blue-50 border border-blue-200 text-blue-700 text-[10px] font-bold px-1.5 py-0.5 rounded">${job.Location || 'N/A'}</span></td>
+                        <td class="px-3 py-1 text-center text-slate-600">${job.Education || ''}</td>
+                        <td class="px-3 py-1 text-center">${job.ChallanFee || '0'}</td>
+                        <td class="px-3 py-1 text-center">${job.ProcessingFee || '0'}</td>
+                        <td class="px-3 py-1 text-center text-amber-600 font-medium">${job.LastDate || ''}</td>
+                        <td class="px-3 py-1 flex items-center justify-center gap-2 mt-0.5">
+                            <label class="switch" title="Toggle Status (Active/Inactive)">
+                                <input type="checkbox" ${isChecked} onchange="updateStatus('${jobId}', this.checked)">
+                                <span class="slider"></span>
+                            </label>
+                            <span class="w-[1px] h-4 bg-slate-200 block"></span>
+                            <button onclick="editJob('${jobId}', \`${btoa(unescape(encodeURIComponent(JSON.stringify({...job, JobId: jobId}))))}\`)" class="hover:bg-amber-50 text-amber-600 border border-amber-300 px-2 py-0.5 rounded transition">Edit</button>
+                            <button onclick="deleteJob('${jobId}')" class="hover:bg-rose-50 text-rose-600 border border-rose-200 px-2 py-0.5 rounded transition">Delete</button>
+                        </td>
+                    `;
+                    tableBody.appendChild(row);
+                }
+                counterBadge.innerText = currentActiveCount;
+
+                if (activeExpiredJobs.length > 0) {
+                    showExpiryNotification(activeExpiredJobs[0].id, activeExpiredJobs[0].title);
+                }
+            });
+        }
+
+        function loadMyIncome() {
+            const tableBody = document.getElementById('incomeTableBody');
+            const totalSumContainer = document.getElementById('totalIncomeSum');
+            const shareHeaderTitle = document.getElementById('shareHeaderTitle');
+            
+            if(!currentUserMobile) return;
+
+            showProgressBar();
+            database.ref('PaymentShares/Researcher').once('value', (shareSnapshot) => {
+                let sharePercent = parseFloat(shareSnapshot.val());
+                if (isNaN(sharePercent)) {
+                    sharePercent = 10;
+                }
+
+                if(shareHeaderTitle) {
+                    shareHeaderTitle.innerText = `My Earning Overview (${sharePercent}% Share)`;
+                }
+
+                database.ref('Orders').once('value', (snapshot) => {
+                    hideProgressBar();
+                    tableBody.innerHTML = "";
+                    let data = snapshot.val();
+                    let srNo = 1;
+                    let grandTotal = 0;
+
+                    if (!data) {
+                        tableBody.innerHTML = `<tr><td colspan="4" class="text-center py-6 text-slate-400">No orders found.</td></tr>`;
+                        totalSumContainer.innerText = "0";
+                        return;
+                    }
+
+                    const cleanStr = (str) => typeof str === 'string' ? str.replace(/^"|"$/g, '').trim() : str;
+
+                    for (let userMobileKey in data) {
+                        let userOrders = data[userMobileKey];
+
+                        if (typeof userOrders === 'object' && userOrders !== null) {
+                            for (let orderId in userOrders) {
+                                let order = userOrders[orderId];
+
+                                let status = cleanStr(order.Status);
+                                let researcher = cleanStr(order.Researcher);
+                                let procFeeRaw = cleanStr(order.ProcessingFee || order.PaidAmount || 0);
+                                let compDate = cleanStr(order.CompleteDate || order.CompletedDate || 'N/A');
+
+                                if (researcher === currentUserMobile && status === "Completed") {
+                                    let procFee = parseFloat(procFeeRaw) || 0;
+                                    let commission = procFee * (sharePercent / 100);
+                                    grandTotal += commission;
+
+                                    let row = document.createElement('tr');
+                                    row.className = "hover:bg-slate-50 text-[11px] border-b border-slate-100";
+                                    row.innerHTML = `
+                                        <td class="px-3 py-1.5 text-center font-bold text-slate-500">${srNo++}</td>
+                                        <td class="px-3 py-1.5 text-center font-mono font-semibold text-blue-600">${orderId}</td>
+                                        <td class="px-3 py-1.5 text-center font-medium text-slate-600">${compDate}</td>
+                                        <td class="px-3 py-1.5 text-center font-bold text-emerald-600">PKR ${commission.toFixed(2)}</td>
+                                    `;
+                                    tableBody.appendChild(row);
+                                }
+                            }
+                        }
+                    }
+
+                    if (srNo === 1) {
+                        tableBody.innerHTML = `<tr><td colspan="4" class="text-center py-6 text-slate-400">No earnings found.</td></tr>`;
+                    }
+
+                    totalSumContainer.innerText = grandTotal.toFixed(2);
+                }, () => hideProgressBar());
+            }, () => hideProgressBar());
+        }
+
+        function showExpiryNotification(id, title) {
+            document.getElementById('expJobId').innerText = id;
+            document.getElementById('expJobTitle').innerText = title;
+            document.getElementById('newExpiryDate').value = "";
+            document.getElementById('expiryModal').classList.remove('hidden');
+        }
+
+        function closeExpiryModal() {
+            document.getElementById('expiryModal').classList.add('hidden');
+        }
+
+        function updateExpiredJobDate() {
+            const id = document.getElementById('expJobId').innerText;
+            const newDateInput = document.getElementById('newExpiryDate').value;
+            
+            if(!newDateInput) {
+                alert("Please select a valid new date.");
+                return;
+            }
+
+            const formattedNewDate = convertDateToDB(newDateInput);
+            showProgressBar();
+
+            database.ref('Jobs/GovtSector/' + id).update({
+                LastDate: formattedNewDate
+            }, (error) => {
+                hideProgressBar();
+                if (!error) {
+                    alert(`Job ID ${id} deadline updated successfully.`);
+                    closeExpiryModal();
+                    loadJobs();
+                } else {
+                    alert("Database update failed!");
+                }
+            });
+        }
+
+        function deleteExpiredJob() {
+            const id = document.getElementById('expJobId').innerText;
+            if(confirm(`Are you sure you want to permanently delete Job ID ${id}?`)) {
+                showProgressBar();
+                database.ref('Jobs/GovtSector/' + id).remove().then(() => {
+                    hideProgressBar();
+                    closeExpiryModal();
+                    loadJobs();
+                });
+            }
+        }
+
+        function updateStatus(jobId, isChecked) {
+            let newStatus = isChecked ? "Active" : "Inactive";
+            showProgressBar();
+            database.ref('Jobs/GovtSector/' + jobId).update({
+                Status: newStatus
+            }, (error) => {
+                hideProgressBar();
+                if (error) {
+                    alert("Status update failed! Check connection.");
+                }
+            });
+        }
+
+        function editJob(jobId, encodedJobData) {
+            let job = JSON.parse(decodeURIComponent(escape(atob(encodedJobData))));
+            document.getElementById('platform').value = job.Platform || "";
+            document.getElementById('jobId').value = job.JobId;
+            document.getElementById('jobTitle').value = job.Title || "";
+            document.getElementById('department').value = job.Department || "";
+            document.getElementById('location').value = job.Location || "";
+            document.getElementById('education').value = job.Education || "";
+            document.getElementById('experience').value = job.Experience || "";
+            
+            document.getElementById('lastDate').value = convertDateToInput(job.LastDate);
+            
+            document.getElementById('jobFee').value = (job.ProcessingFee && job.ProcessingFee !== "0") ? job.ProcessingFee : "";
+            document.getElementById('challanFee').value = (job.ChallanFee && job.ChallanFee !== "0") ? job.ChallanFee : "";
+            document.getElementById('alertMessage').value = job.Alert || "";
+
+            document.getElementById('editJobId').value = job.JobId;
+            document.getElementById('editJobStatus').value = job.Status || "Active";
+
+            document.getElementById('submitBtn').innerText = "Update Job";
+            document.getElementById('cancelEditBtn').classList.remove('hidden');
+            switchTab('add-job-tab', document.querySelectorAll('.tab-btn')[0]);
+        }
+
+        function deleteJob(jobId) {
+            if(confirm(`Permanently remove Job ID ${jobId}?`)) {
+                showProgressBar();
+                database.ref('Jobs/GovtSector/' + jobId).remove().then(() => {
+                    hideProgressBar();
+                });
+            }
+        }
+
+        function resetForm() {
+            document.getElementById('jobForm').reset();
+            document.getElementById('editJobId').value = "";
+            document.getElementById('editJobStatus').value = "";
+            document.getElementById('submitBtn').innerText = "Save Record";
+            document.getElementById('cancelEditBtn').classList.add('hidden');
+            document.getElementById('duplicateWarning').classList.add('hidden');
+            getLatestJobId();
+        }
+    </script>
 </body>
 </html>
