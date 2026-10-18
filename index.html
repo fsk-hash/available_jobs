@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>E-Services Control Center - Government Jobs</title>
+    <title>E-Services Control Center - Unified Job Portal</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght=400;500;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
         body { font-family: 'Inter', sans-serif; height: 100vh; overflow: hidden; }
         .tab-content { display: none; }
         .tab-content.active { display: flex; flex-direction: column; flex-grow: 1; }
@@ -42,7 +42,6 @@
         input:checked + .slider { background-color: #10b981; }
         input:checked + .slider:before { transform: translateX(18px); }
 
-        /* Progress Bar Animation */
         @keyframes progressLoading {
             0% { width: 0%; left: 0; }
             50% { width: 70%; left: 15%; }
@@ -60,6 +59,7 @@
         <div class="h-full bg-blue-600 progress-bar-line rounded-full"></div>
     </div>
 
+    <!-- Expiry Modal -->
     <div id="expiryModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
         <div class="bg-white rounded-xl shadow-2xl border border-rose-200 p-5 max-w-md w-full text-center">
             <div class="bg-rose-100 text-rose-600 w-12 h-12 rounded-full flex items-center justify-center text-xl mx-auto mb-3 font-bold">⚠️</div>
@@ -81,6 +81,7 @@
         </div>
     </div>
 
+    <!-- Custom Notification -->
     <div id="customNotification" class="fixed top-5 left-1/2 transform -translate-x-1/2 bg-emerald-600 text-white px-6 py-3 rounded-xl shadow-2xl font-semibold text-sm tracking-wide z-50 flex items-center gap-2 opacity-0 pointer-events-none transition-all duration-300">
         <span class="w-2 h-2 rounded-full bg-white animate-ping"></span>
         Job is Live Now
@@ -90,7 +91,7 @@
     <div id="loginOverlay" class="fixed inset-0 bg-slate-900/90 backdrop-blur-md z-50 flex items-center justify-center p-4">
         <div class="bg-white rounded-xl shadow-2xl border border-slate-200 p-6 max-w-sm w-full text-center">
             <div class="bg-blue-600 w-50 h-12 rounded-lg flex items-center justify-center text-white font-bold text-xl mx-auto mb-3">E-Services</div>
-            <h2 class="text-xl font-bold text-slate-900 mb-1">Government Jobs Access</h2>
+            <h2 class="text-xl font-bold text-slate-900 mb-1">Portal Access</h2>
             <p class="text-xs text-slate-500 mb-4">Enter Mobile Number and Password to Login</p>
             <form onsubmit="verifyAuth(event)" class="space-y-3">
                 <input type="text" id="mobileInput" placeholder="Mobile Number (e.g. 03001234567)" required class="w-full px-3 py-2 border rounded-lg text-sm outline-none focus:ring-1 focus:ring-blue-500 text-center font-mono">
@@ -100,11 +101,12 @@
         </div>
     </div>
 
+    <!-- Header -->
     <header class="bg-slate-900 text-white px-4 py-2 flex justify-between items-center w-full shadow-sm shrink-0">
         <div class="flex items-center gap-2">
             <div class="bg-blue-600 px-2 py-0.5 rounded font-bold text-sm tracking-wider">E-Services</div>
             <div>
-                <h1 class="text-sm font-bold tracking-tight">Government Jobs Admin Panel</h1>
+                <h1 class="text-sm font-bold tracking-tight">Unified Jobs Admin Panel</h1>
             </div>
         </div>
         <span class="inline-flex items-center gap-1 bg-emerald-950 text-emerald-400 text-[10px] font-medium px-2 py-0.5 rounded border border-emerald-800">
@@ -112,6 +114,20 @@
         </span>
     </header>
 
+    <!-- Global Category Selection Bar -->
+    <div class="bg-slate-100 border-b border-slate-200 px-4 py-2 flex items-center justify-between shrink-0">
+        <div class="flex items-center gap-2 w-full max-w-md">
+            <label for="globalCategorySelect" class="text-xs font-bold text-slate-700 whitespace-nowrap">Job Category:</label>
+            <select id="globalCategorySelect" onchange="onCategoryChange()" class="w-full px-3 py-1 bg-white border border-slate-300 rounded-md text-xs font-semibold text-slate-800 outline-none focus:ring-1 focus:ring-blue-500 shadow-sm">
+                <option value="Banking">Banking Jobs</option>
+                <option value="Federal">Federal Jobs</option>
+                <option value="GovtSector">Government Jobs</option>
+                <option value="Private">Private Jobs</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Navigation Tabs -->
     <nav class="bg-white border-b border-slate-200 w-full flex shrink-0 shadow-sm">
         <button onclick="switchTab('add-job-tab', this)" class="tab-btn flex-1 py-2 text-center text-xs font-semibold text-blue-600 border-b-2 border-blue-600 focus:outline-none transition-all hover:bg-slate-50">
             Add New Job
@@ -122,13 +138,17 @@
         <button onclick="switchTab('my-income-tab', this); loadMyIncome();" class="tab-btn flex-1 py-2 text-center text-xs font-semibold text-slate-500 border-b-2 border-transparent focus:outline-none transition-all hover:text-slate-800 hover:bg-slate-50">
             My Income
         </button>
+        <button onclick="switchTab('url-view-tab', this); loadUrlViewStatus();" class="tab-btn flex-1 py-2 text-center text-xs font-semibold text-slate-500 border-b-2 border-transparent focus:outline-none transition-all hover:text-slate-800 hover:bg-slate-50">
+            URL View
+        </button>
     </nav>
 
+    <!-- Main Content Area -->
     <main class="flex-grow w-full p-3 overflow-hidden flex flex-col">
         
+        <!-- Add/Edit Job Tab -->
         <div id="add-job-tab" class="tab-content active justify-center overflow-auto">
             <div class="bg-white/90 backdrop-blur-sm rounded-xl border border-slate-200 shadow-sm max-w-4xl mx-auto p-4 w-full">
-                <!-- ڈپلیکیشن الرٹ کا پیغام ظاہر کرنے کے لیے باکس -->
                 <div id="duplicateWarning" class="hidden mb-3 p-3 bg-amber-50 border border-amber-300 rounded-lg text-amber-800 text-xs flex items-center justify-between">
                     <div>
                         <span class="font-bold">⚠️ خبردار (Duplicate Warning):</span>
@@ -146,24 +166,53 @@
                         <input type="text" id="jobId" readonly class="w-full px-3 py-1 bg-slate-50 border border-slate-200 text-slate-500 rounded-lg outline-none font-mono font-bold" placeholder="Generating ID...">
                     </div>
 
-                    <div>
-                        <label class="block font-medium text-slate-600 mb-1">Platform:</label>
-                        <input type="text" id="platform" placeholder="e.g. FPSC, PPSC, NTS, Direct" class="w-full px-3 py-1.5 border border-slate-300 rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none uppercase font-medium">
+                    <!-- Select Bank Field (Will show only for Banking category) -->
+                    <div id="selectBankContainer" class="hidden">
+                        <label class="block font-medium text-slate-600 mb-1">Select Bank:</label>
+                        <select id="selectBankField" class="w-full px-3 py-1.5 border border-slate-300 rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none font-medium bg-white">
+                            <option value="">-- Choose Pakistani Bank --</option>
+                            <option value="HBL">Habib Bank Limited (HBL)</option>
+                            <option value="UBL">United Bank Limited (UBL)</option>
+                            <option value="MCB">MCB Bank Limited</option>
+                            <option value="ABL">Allied Bank Limited (ABL)</option>
+                            <option value="NBP">National Bank of Pakistan (NBP)</option>
+                            <option value="MEBL">Meezan Bank Limited</option>
+                            <option value="BAFL">Bank Alfalah</option>
+                            <option value="FABL">Faysal Bank</option>
+                            <option value="AKBL">Askari Bank</option>
+                            <option value="BAH">Bank Al-Habib</option>
+                            <option value="BOK">Bank of Khyber (BOK)</option>
+                            <option value="BOP">Bank of Punjab (BOP)</option>
+                            <option value="JSBL">JS Bank</option>
+                            <option value="SCB">Standard Chartered Bank Pakistan</option>
+                            <option value="SBL">Soneri Bank</option>
+                            <option value="HMB">Habib Metropolitan Bank</option>
+                            <option value="SMBL">Summit Bank / Silkbank</option>
+                            <option value="JS">Mobilink Microfinance Bank</option>
+                            <option value="Telenor">Telenor Microfinance Bank (Easypaisa)</option>
+                            <option value="NRSP">NRSP Microfinance Bank</option>
+                            <option value="FirstMicrofinance">First MicroFinanceBank</option>
+                        </select>
+                    </div>
+
+                    <div id="platformFieldWrapper">
+                        <label class="block font-medium text-slate-600 mb-1">Platform / Website URL:</label>
+                        <input type="text" id="platform" placeholder="e.g. https://example.com" class="w-full px-3 py-1.5 border border-slate-300 rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none font-medium">
                     </div>
 
                     <div>
                         <label class="block font-medium text-slate-600 mb-1">Job Title / Vacancy Name:</label>
-                        <input type="text" id="jobTitle" oninput="checkForDuplicates()" placeholder="e.g. Assistant Director" class="w-full px-3 py-1.5 border border-slate-300 rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none font-medium">
+                        <input type="text" id="jobTitle" oninput="checkForDuplicates()" placeholder="e.g. Officer / Software Engineer" class="w-full px-3 py-1.5 border border-slate-300 rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none font-medium">
                     </div>
 
                     <div>
                         <label class="block font-medium text-slate-600 mb-1">Department:</label>
-                        <input type="text" id="department" oninput="checkForDuplicates()" placeholder="e.g. Ministry of Defence" class="w-full px-3 py-1.5 border border-slate-300 rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none">
+                        <input type="text" id="department" oninput="checkForDuplicates()" placeholder="e.g. IT Department" class="w-full px-3 py-1.5 border border-slate-300 rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none">
                     </div>
 
                     <div>
                         <label class="block font-medium text-slate-600 mb-1">Location:</label>
-                        <input type="text" id="location" placeholder="e.g. Islamabad, All Pakistan, Lahore" class="w-full px-3 py-1.5 border border-slate-300 rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none font-medium">
+                        <input type="text" id="location" placeholder="e.g. Islamabad, All Pakistan" class="w-full px-3 py-1.5 border border-slate-300 rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none font-medium">
                     </div>
 
                     <div>
@@ -196,6 +245,21 @@
                         <textarea id="alertMessage" rows="2" placeholder="Enter alert or warning details here..." class="w-full px-3 py-1 border border-slate-300 rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none"></textarea>
                     </div>
 
+                    <!-- نئی فیلڈز: ریسرچر سلیکشن اور موبائل نمبر باکس -->
+                    <div class="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-3 pt-2 border-t border-slate-100">
+                        <div>
+                            <label class="block font-medium text-slate-600 mb-1">Researcher Selection:</label>
+                            <select id="researcherOptionSelect" onchange="onResearcherOptionChange()" class="w-full px-3 py-1.5 border border-slate-300 rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none font-medium bg-white">
+                                <option value="myself">My Self</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                        <div id="otherMobileWrapper" class="hidden">
+                            <label class="block font-medium text-slate-600 mb-1">Other Mobile Number (11 Digits):</label>
+                            <input type="text" id="otherMobileInput" maxlength="11" placeholder="e.g. 03001234567" class="w-full px-3 py-1.5 border border-slate-300 rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none font-mono">
+                        </div>
+                    </div>
+
                     <div class="md:col-span-2 pt-2 border-t border-slate-100 flex gap-2 justify-end">
                         <button type="button" id="cancelEditBtn" onclick="resetForm()" class="hidden bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold py-1.5 px-4 rounded-lg transition text-xs">Cancel</button>
                         <button type="submit" id="submitBtn" class="bg-slate-900 hover:bg-slate-800 text-white font-semibold py-1.5 px-6 rounded-lg shadow-sm transition text-xs">Save Record</button>
@@ -204,20 +268,20 @@
             </div>
         </div>
 
+        <!-- Manage Existing Jobs Tab -->
         <div id="manage-jobs-tab" class="tab-content overflow-hidden">
             <div class="bg-white/90 backdrop-blur-sm rounded-xl border border-slate-200 shadow-sm w-full flex flex-col flex-grow overflow-hidden">
                 <div class="px-4 py-2 border-b border-slate-200 bg-slate-50/50 flex justify-between items-center shrink-0">
-                    <p class="text-xs text-slate-500 font-medium">Live Government Jobs Overview</p>
+                    <p class="text-xs text-slate-500 font-medium" id="manageHeaderTitle">Live Jobs Overview</p>
                     <div class="flex items-center gap-2">
                         <span class="inline-flex items-center gap-1 bg-slate-200 text-slate-800 text-[11px] font-bold px-2 py-1 rounded border border-slate-300 shadow-sm">
-                            Total Active Govt Jobs: <span id="totalActiveJobsCount" class="text-blue-600 font-mono ml-1">0</span>
+                            Total Active Jobs: <span id="totalActiveJobsCount" class="text-blue-600 font-mono ml-1">0</span>
                         </span>
                         <button onclick="loadJobs()" class="bg-white hover:bg-slate-100 text-slate-700 text-[11px] font-medium py-1 px-3 border border-slate-300 rounded shadow-sm transition">🔄 Refresh</button>
                     </div>
                 </div>
                 
                 <div class="overflow-auto flex-grow w-full relative">
-                    <!-- Table Loading Progress Indicator -->
                     <div id="tableProgressBar" class="absolute inset-x-0 top-0 h-1 bg-blue-100 hidden">
                         <div class="h-full bg-blue-600 progress-bar-line rounded-full"></div>
                     </div>
@@ -246,13 +310,30 @@
             </div>
         </div>
 
+        <!-- URL View Tab -->
+        <div id="url-view-tab" class="tab-content justify-center overflow-auto">
+            <div class="bg-white/90 backdrop-blur-sm rounded-xl border border-slate-200 shadow-sm max-w-2xl mx-auto p-5 w-full">
+                <div class="flex items-center justify-between gap-4">
+                    <div>
+                        <p class="text-sm font-bold text-slate-900">ViewSource Status</p>
+                        <p class="text-xs text-slate-500 mt-1">Change this switch to update the ViewSource value for every job in all job categories.</p>
+                    </div>
+                    <label class="switch shrink-0" title="Toggle ViewSource for all jobs">
+                        <input type="checkbox" id="urlViewStatusSwitch" onchange="updateAllJobsUrlView(this.checked)">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- My Income Tab -->
         <div id="my-income-tab" class="tab-content overflow-hidden">
             <div class="bg-white/90 backdrop-blur-sm rounded-xl border border-slate-200 shadow-sm w-full flex flex-col flex-grow overflow-hidden">
                 <div class="px-4 py-2 border-b border-slate-200 bg-slate-50/50 flex justify-between items-center shrink-0">
                     <p class="text-xs text-slate-500 font-medium" id="shareHeaderTitle">My Earning Overview</p>
                     <div class="flex items-center gap-2">
-                        <span class="inline-flex items-center gap-1 bg-emerald-100 text-emerald-800 text-sm font-extrabold px-3 py-1.5 rounded-lg border border-emerald-300 shadow-sm">
-                            Total Income: PKR <span id="totalIncomeSum" class="text-emerald-700 font-mono ml-1 text-base font-black">0</span>
+                        <span class="inline-flex items-center gap-1 bg-emerald-100 text-emerald-800 text-[11px] font-bold px-3 py-1 rounded border border-emerald-300 shadow-sm">
+                            Total Income: PKR <span id="totalIncomeSum" class="text-emerald-700 font-mono ml-1">0</span>
                         </span>
                         <button onclick="loadMyIncome()" class="bg-white hover:bg-slate-100 text-slate-700 text-[11px] font-medium py-1 px-3 border border-slate-300 rounded shadow-sm transition">🔄 Refresh</button>
                     </div>
@@ -265,7 +346,7 @@
                                 <th class="px-3 py-2 text-center">Sr. No</th>
                                 <th class="px-3 py-2 text-center">Order No</th>
                                 <th class="px-3 py-2 text-center">Completion Date</th>
-                                <th class="px-3 py-2 text-center">Generated Income (PKR)</th>
+                                <th class="px-3 py-2 text-center">Commission Amount (PKR)</th>
                             </tr>
                         </thead>
                         <tbody id="incomeTableBody" class="text-slate-700 divide-y divide-slate-200 text-xs font-medium">
@@ -280,13 +361,16 @@
 
     </main>
 
+    <!-- Footer -->
     <footer class="bg-white/80 border-t border-slate-200 px-4 py-1 text-center text-[10px] text-slate-400 w-full shrink-0">
         &copy; 2026 Hussain E-Services Portal.
     </footer>
 
+    <!-- JavaScript Logic -->
     <script>
         const firebaseConfig = {
             apiKey: "AIzaSyDhBSYrjhZMTtIQbGox7GRwyQgD_zpieAU",
+            authDomain: "e-services-1801a.firebaseapp.com",
             databaseURL: "https://e-services-1801a-default-rtdb.firebaseio.com",
             projectId: "e-services-1801a",
             storageBucket: "e-services-1801a.firebasestorage.app"
@@ -299,8 +383,55 @@
         let notificationTimeout;
         let activeExpiredJobs = []; 
         let currentUserMobile = "";
-        
         let localJobsCache = {};
+
+        function getCurrentCategory() {
+            return document.getElementById('globalCategorySelect').value;
+        }
+
+        function getCategoryDBPath() {
+            const cat = getCurrentCategory();
+            return 'Jobs/' + cat;
+        }
+
+        function getIDPrefix() {
+            const cat = getCurrentCategory();
+            switch(cat) {
+                case 'Banking': return 'Bank';
+                case 'Federal': return 'Fed';
+                case 'GovtSector': return 'Govt';
+                case 'Private': return 'Pvt';
+                default: return 'Job';
+            }
+        }
+
+        function updateCategoryUI() {
+            const cat = getCurrentCategory();
+            const bankContainer = document.getElementById('selectBankContainer');
+            if (cat === 'Banking') {
+                bankContainer.classList.remove('hidden');
+            } else {
+                bankContainer.classList.add('hidden');
+                document.getElementById('selectBankField').value = "";
+            }
+        }
+
+        function onResearcherOptionChange() {
+            const val = document.getElementById('researcherOptionSelect').value;
+            const otherWrapper = document.getElementById('otherMobileWrapper');
+            if (val === 'other') {
+                otherWrapper.classList.remove('hidden');
+            } else {
+                otherWrapper.classList.add('hidden');
+                document.getElementById('otherMobileInput').value = "";
+            }
+        }
+
+        function onCategoryChange() {
+            updateCategoryUI();
+            resetForm();
+            loadJobs();
+        }
 
         function showProgressBar() {
             document.getElementById('globalProgressBar').classList.remove('hidden');
@@ -314,14 +445,102 @@
             if(tableBar) tableBar.classList.add('hidden');
         }
 
-        function verifyAuth(e) {
+        function normalizeMobileNumber(value) {
+            let mobile = (value || "").trim().replace(/[\s-]/g, "");
+
+            if (mobile.startsWith("+92")) {
+                mobile = "0" + mobile.substring(3);
+            } else if (mobile.startsWith("92") && mobile.length === 12) {
+                mobile = "0" + mobile.substring(2);
+            } else if (mobile.length === 10 && mobile.startsWith("3")) {
+                mobile = "0" + mobile;
+            }
+
+            return mobile;
+        }
+
+        function getAuthEmailCandidates(mobile) {
+            const clean = (mobile || "").trim().replace(/[\s-]/g, "");
+            const local = normalizeMobileNumber(clean);
+            const candidates = [];
+
+            if (clean.includes("@")) {
+                candidates.push(clean.toLowerCase());
+            }
+            if (local) {
+                candidates.push(local + "@gmail.com");
+            }
+            if (local.startsWith("03") && local.length === 11) {
+                candidates.push("92" + local.substring(1) + "@gmail.com");
+            }
+
+            return [...new Set(candidates)];
+        }
+
+        function getFirebaseAuthErrorMessage(error) {
+            const code = (error && error.code) ? error.code : "";
+
+            switch (code) {
+                case "auth/invalid-credential":
+                case "auth/invalid-login-credentials":
+                case "auth/wrong-password":
+                case "auth/user-not-found":
+                    return "Mobile number or password is incorrect. Please check your Firebase Authentication account credentials.";
+                case "auth/invalid-email":
+                    return "The mobile number/email format is invalid.";
+                case "auth/user-disabled":
+                    return "This Firebase Authentication account has been disabled.";
+                case "auth/too-many-requests":
+                    return "Too many login attempts. Please wait a while and try again.";
+                case "auth/network-request-failed":
+                    return "Firebase Authentication could not connect. Please check your internet connection.";
+                default:
+                    return "Firebase Authentication failed. Error: " + ((error && error.message) || "Unknown error");
+            }
+        }
+
+        async function signInWithMobileCandidates(mobile, password) {
+            const candidates = getAuthEmailCandidates(mobile);
+            let lastError = null;
+
+            for (const email of candidates) {
+                try {
+                    const credential = await auth.signInWithEmailAndPassword(email, password);
+                    return credential;
+                } catch (error) {
+                    lastError = error;
+
+                    if ([
+                        "auth/invalid-credential",
+                        "auth/invalid-login-credentials",
+                        "auth/wrong-password",
+                        "auth/user-not-found",
+                        "auth/invalid-email"
+                    ].indexOf(error.code) === -1) {
+                        throw error;
+                    }
+                }
+            }
+
+            throw lastError || new Error("Firebase Authentication failed.");
+        }
+
+        async function verifyAuth(e) {
             e.preventDefault();
-            const mobileInput = document.getElementById('mobileInput').value.trim();
-            const passInput = document.getElementById('passInput').value.trim();
+
+            const rawMobile = document.getElementById('mobileInput').value.trim();
+            const passInput = document.getElementById('passInput').value;
             const loginBtn = document.getElementById('loginBtn');
 
-            if(!mobileInput || !passInput) {
+            if (!rawMobile || !passInput) {
                 alert("Please enter both Mobile Number and Password.");
+                return;
+            }
+
+            const mobileInput = normalizeMobileNumber(rawMobile);
+
+            if (!/^03\d{9}$/.test(mobileInput)) {
+                alert("Please enter a valid Pakistani mobile number, for example 03001234567.");
                 return;
             }
 
@@ -329,48 +548,38 @@
             loginBtn.disabled = true;
             showProgressBar();
 
-            const formattedEmail = mobileInput + "@gmail.com";
+            try {
+                await signInWithMobileCandidates(mobileInput, passInput);
 
-            auth.signInWithEmailAndPassword(formattedEmail, passInput)
-                .then((userCredential) => {
-                    database.ref('Users/' + mobileInput).once('value', (snapshot) => {
-                        loginBtn.innerText = "Authenticate";
-                        loginBtn.disabled = false;
-                        hideProgressBar();
+                const snapshot = await database.ref('Users/' + mobileInput).once('value');
+                const userData = snapshot.val();
+                const accountType = userData
+                    ? (userData.AccountType || userData.UserType || "").toString().trim().toLowerCase()
+                    : "";
 
-                        const userData = snapshot.val();
-                        if (userData) {
-                            const accountType = (userData.AccountType || userData.UserType || "").toString().toLowerCase();
-                            if (accountType === 'administrator' || accountType === 'admin' || accountType === 'researcher' || accountType === 'worker') {
-                                currentUserMobile = mobileInput;
-                                document.getElementById('loginOverlay').remove();
-                                getLatestJobId();
-                                loadJobs();
-                            } else {
-                                auth.signOut();
-                                alert("آپ اس پورٹل پر لاگ ان نہیں کرسکتے کیونکہ آپ اوتھرائزڈ نہیں ہیں۔");
-                            }
-                        } else {
-                            auth.signOut();
-                            alert("آپ اس پورٹل پر لاگ ان نہیں کرسکتے کیونکہ آپ اوتھرائزڈ نہیں ہیں۔");
-                        }
-                    }, (error) => {
-                        loginBtn.innerText = "Authenticate";
-                        loginBtn.disabled = false;
-                        hideProgressBar();
-                        auth.signOut();
-                        alert("Error verifying account status: " + error.message);
-                    });
-                })
-                .catch((error) => {
-                    loginBtn.innerText = "Authenticate";
-                    loginBtn.disabled = false;
-                    hideProgressBar();
-                    alert("Authentication Failed: Invalid Credentials!");
-                });
+                if (userData && (accountType === 'administrator' || accountType === 'admin' || accountType === 'researcher' || accountType === 'worker')) {
+                    currentUserMobile = mobileInput;
+                    document.getElementById('loginOverlay').remove();
+                    getLatestJobId();
+                    updateCategoryUI();
+                    loadJobs();
+                    loadUrlViewStatus();
+                } else {
+                    await auth.signOut();
+                    alert("آپ اس پورٹل پر لاگ ان نہیں کرسکتے کیونکہ آپ اوتھرائزڈ نہیں ہیں۔");
+                }
+            } catch (error) {
+                console.error("Firebase Authentication error:", error);
+                alert(getFirebaseAuthErrorMessage(error));
+            } finally {
+                loginBtn.innerText = "Authenticate";
+                loginBtn.disabled = false;
+                hideProgressBar();
+            }
         }
 
         document.addEventListener("DOMContentLoaded", () => {
+            updateCategoryUI();
             ['mousemove', 'keydown', 'mousedown'].forEach(evt => {
                 window.addEventListener(evt, () => {
                     const notify = document.getElementById('customNotification');
@@ -409,7 +618,10 @@
         function getLatestJobId() {
             if(document.getElementById('editJobId').value) return; 
             showProgressBar();
-            database.ref('Jobs/GovtSector').once('value', (snapshot) => {
+            const dbPath = getCategoryDBPath();
+            const prefix = getIDPrefix();
+
+            database.ref(dbPath).once('value', (snapshot) => {
                 hideProgressBar();
                 let data = snapshot.val();
                 let nextNum = 101; 
@@ -417,7 +629,8 @@
                     let keys = Object.keys(data);
                     let nums = [];
                     keys.forEach(k => {
-                        let numPart = k.replace(/^Govt/i, '');
+                        let regex = new RegExp('^' + prefix, 'i');
+                        let numPart = k.replace(regex, '');
                         let n = parseInt(numPart, 10);
                         if (!isNaN(n)) {
                             nums.push(n);
@@ -429,7 +642,7 @@
                         nextNum = maxNum >= 101 ? maxNum + 1 : 101;
                     }
                 }
-                document.getElementById('jobId').value = "Govt" + nextNum;
+                document.getElementById('jobId').value = prefix + nextNum;
             }, () => hideProgressBar());
         }
 
@@ -464,10 +677,8 @@
             }
 
             const sanitize = (str) => (str || '').toLowerCase().replace(/[^a-z0-9]/g, '');
-
             const cleanTitle = sanitize(title);
             const cleanDept = sanitize(dept);
-
             let duplicateFound = null;
 
             for (let jobId in localJobsCache) {
@@ -478,12 +689,11 @@
                 let itemDept = sanitize(job.Department);
 
                 if (itemTitle === cleanTitle && (cleanDept && itemDept === cleanDept)) {
-                    duplicateFound = { ...job, id: jobId, matchType: "Exact Match (Same Title & Department)" };
+                    duplicateFound = { ...job, id: jobId };
                     break;
                 }
-
                 if (itemTitle === cleanTitle && cleanDept && itemDept.includes(cleanDept)) {
-                    duplicateFound = { ...job, id: jobId, matchType: "Similar Title & Department" };
+                    duplicateFound = { ...job, id: jobId };
                     break;
                 }
             }
@@ -498,8 +708,22 @@
 
         function saveJob(e) {
             e.preventDefault();
+
+            let selectedResearcherOpt = document.getElementById('researcherOptionSelect').value;
+            let finalResearcherMobile = currentUserMobile;
+
+            if (selectedResearcherOpt === 'other') {
+                let otherMobile = document.getElementById('otherMobileInput').value.trim();
+                if (otherMobile.length !== 11 || isNaN(otherMobile)) {
+                    alert("براہ کرم 11 ہندسوں کا درست موبائل نمبر درج کریں۔");
+                    document.getElementById('otherMobileInput').focus();
+                    return;
+                }
+                finalResearcherMobile = otherMobile;
+            }
+
             showProgressBar();
-            let platformInput = document.getElementById('platform').value.trim().toUpperCase();
+            let platformInput = document.getElementById('platform').value.trim();
             let jobId = document.getElementById('jobId').value;
             let jobTitle = document.getElementById('jobTitle').value;
             let department = document.getElementById('department').value;
@@ -510,11 +734,9 @@
             
             let jobFee = document.getElementById('jobFee').value.trim() !== "" ? document.getElementById('jobFee').value.trim() : "0";
             let challanFee = document.getElementById('challanFee').value.trim() !== "" ? document.getElementById('challanFee').value.trim() : "0";
-            
             let alertMsg = document.getElementById('alertMessage').value;
 
             let lastDateFormatted = convertDateToDB(lastDateInput);
-
             let isEditMode = document.getElementById('editJobId').value !== "";
             let targetJobId = isEditMode ? document.getElementById('editJobId').value : jobId;
             let jobStatus = isEditMode ? (document.getElementById('editJobStatus').value || "Active") : "Active";
@@ -525,7 +747,13 @@
             const yyyy = today.getFullYear();
             const currentPostDate = `${dd}-${mm}-${yyyy}`;
 
-            database.ref('Jobs/GovtSector/' + targetJobId).set({
+            const dbPath = getCategoryDBPath() + '/' + targetJobId;
+
+            // ٹوگل بٹن (URL View) کی حالت چیک کریں کہ آیا یہ آن ہے یا آف
+            const urlViewToggle = document.getElementById('urlViewStatusSwitch');
+            const isUrlViewEnabled = urlViewToggle ? urlViewToggle.checked : true;
+
+            let jobData = {
                 Platform: platformInput,
                 Title: jobTitle,
                 Department: department,
@@ -538,8 +766,16 @@
                 Alert: alertMsg,
                 Status: jobStatus,
                 PostDate: currentPostDate,
-                Researcher: currentUserMobile
-            }, (error) => {
+                Researcher: finalResearcherMobile,
+                ViewSource: isUrlViewEnabled // اب یہ ٹوگل بٹن کی موجودہ حالت کے مطابق سیو ہو گا
+            };
+
+            if (getCurrentCategory() === 'Banking') {
+                const bankSelect = document.getElementById('selectBankField');
+                jobData.Bank = bankSelect.options[bankSelect.selectedIndex].text;
+            }
+
+            database.ref(dbPath).set(jobData, (error) => {
                 hideProgressBar();
                 if (!error) {
                     resetForm();
@@ -567,9 +803,17 @@
         function loadJobs() {
             const tableBody = document.getElementById('jobsTableBody');
             const counterBadge = document.getElementById('totalActiveJobsCount');
+            const manageHeaderTitle = document.getElementById('manageHeaderTitle');
+            const currentCat = getCurrentCategory();
+
+            if(manageHeaderTitle) {
+                manageHeaderTitle.innerText = `Live ${currentCat} Jobs Overview`;
+            }
             
             showProgressBar();
-            database.ref('Jobs/GovtSector').on('value', (snapshot) => {
+            const dbPath = getCategoryDBPath();
+
+            database.ref(dbPath).on('value', (snapshot) => {
                 hideProgressBar();
                 tableBody.innerHTML = "";
                 let data = snapshot.val();
@@ -578,7 +822,7 @@
                 activeExpiredJobs = []; 
 
                 if(!data) {
-                    tableBody.innerHTML = `<tr><td colspan="9" class="text-center py-6 text-slate-400">No Govt sector jobs found.</td></tr>`;
+                    tableBody.innerHTML = `<tr><td colspan="9" class="text-center py-6 text-slate-400">No jobs found in ${currentCat} category.</td></tr>`;
                     counterBadge.innerText = "0";
                     return;
                 }
@@ -682,7 +926,7 @@
                                         <td class="px-3 py-1.5 text-center font-bold text-slate-500">${srNo++}</td>
                                         <td class="px-3 py-1.5 text-center font-mono font-semibold text-blue-600">${orderId}</td>
                                         <td class="px-3 py-1.5 text-center font-medium text-slate-600">${compDate}</td>
-                                        <td class="px-3 py-1.5 text-center font-bold text-emerald-600">PKR ${Math.round(commission)}</td>
+                                        <td class="px-3 py-1.5 text-center font-bold text-emerald-600">PKR ${commission.toFixed(2)}</td>
                                     `;
                                     tableBody.appendChild(row);
                                 }
@@ -694,7 +938,7 @@
                         tableBody.innerHTML = `<tr><td colspan="4" class="text-center py-6 text-slate-400">No earnings found.</td></tr>`;
                     }
 
-                    totalSumContainer.innerText = Math.round(grandTotal);
+                    totalSumContainer.innerText = grandTotal.toFixed(2);
                 }, () => hideProgressBar());
             }, () => hideProgressBar());
         }
@@ -721,9 +965,11 @@
 
             const formattedNewDate = convertDateToDB(newDateInput);
             showProgressBar();
+            const dbPath = getCategoryDBPath() + '/' + id;
 
-            database.ref('Jobs/GovtSector/' + id).update({
-                LastDate: formattedNewDate
+            database.ref(dbPath).update({
+                LastDate: formattedNewDate,
+                ViewSource: true
             }, (error) => {
                 hideProgressBar();
                 if (!error) {
@@ -740,7 +986,8 @@
             const id = document.getElementById('expJobId').innerText;
             if(confirm(`Are you sure you want to permanently delete Job ID ${id}?`)) {
                 showProgressBar();
-                database.ref('Jobs/GovtSector/' + id).remove().then(() => {
+                const dbPath = getCategoryDBPath() + '/' + id;
+                database.ref(dbPath).remove().then(() => {
                     hideProgressBar();
                     closeExpiryModal();
                     loadJobs();
@@ -751,8 +998,10 @@
         function updateStatus(jobId, isChecked) {
             let newStatus = isChecked ? "Active" : "Inactive";
             showProgressBar();
-            database.ref('Jobs/GovtSector/' + jobId).update({
-                Status: newStatus
+            const dbPath = getCategoryDBPath() + '/' + jobId;
+            database.ref(dbPath).update({
+                Status: newStatus,
+                ViewSource: true
             }, (error) => {
                 hideProgressBar();
                 if (error) {
@@ -761,8 +1010,102 @@
             });
         }
 
+        function loadUrlViewStatus() {
+            const toggle = document.getElementById('urlViewStatusSwitch');
+            if (!toggle) return;
+
+            database.ref('Jobs').once('value').then((snapshot) => {
+                const jobsRoot = snapshot.val();
+                let hasJobs = false;
+                let allEnabled = true;
+
+                if (jobsRoot) {
+                    Object.keys(jobsRoot).forEach(category => {
+                        const categoryJobs = jobsRoot[category];
+                        if (categoryJobs && typeof categoryJobs === 'object') {
+                            Object.keys(categoryJobs).forEach(jobId => {
+                                const job = categoryJobs[jobId];
+                                if (job && typeof job === 'object') {
+                                    hasJobs = true;
+                                    if (job['ViewSource'] !== true) {
+                                        allEnabled = false;
+                                    }
+                                }
+                            });
+                        }
+                    });
+                }
+
+                toggle.checked = hasJobs && allEnabled;
+            }).catch((error) => {
+                console.error("Unable to load ViewSource status:", error);
+            });
+        }
+
+        function updateAllJobsUrlView(isEnabled) {
+            const toggle = document.getElementById('urlViewStatusSwitch');
+            if (toggle) toggle.disabled = true;
+
+            showProgressBar();
+
+            database.ref('Jobs').once('value').then((snapshot) => {
+                const jobsRoot = snapshot.val();
+                const updates = {};
+
+                if (jobsRoot) {
+                    Object.keys(jobsRoot).forEach(category => {
+                        const categoryJobs = jobsRoot[category];
+
+                        if (categoryJobs && typeof categoryJobs === 'object') {
+                            Object.keys(categoryJobs).forEach(jobId => {
+                                const job = categoryJobs[jobId];
+
+                                if (job && typeof job === 'object') {
+                                    updates['Jobs/' + category + '/' + jobId + '/ViewSource'] = isEnabled;
+                                }
+                            });
+                        }
+                    });
+                }
+
+                if (Object.keys(updates).length === 0) {
+                    hideProgressBar();
+                    if (toggle) toggle.disabled = false;
+                    alert("No jobs found in the database.");
+                    return null;
+                }
+
+                return database.ref().update(updates);
+            }).then((result) => {
+                if (result === null) return;
+                hideProgressBar();
+                if (toggle) {
+                    toggle.checked = isEnabled;
+                    toggle.disabled = false;
+                }
+                alert("ViewSource status updated for all jobs successfully.");
+            }).catch((error) => {
+                hideProgressBar();
+                if (toggle) toggle.disabled = false;
+                if (toggle) toggle.checked = !isEnabled;
+                alert("ViewSource status update failed! Check your database connection.");
+                console.error("ViewSource bulk update failed:", error);
+            });
+        }
+
         function editJob(jobId, encodedJobData) {
             let job = JSON.parse(decodeURIComponent(escape(atob(encodedJobData))));
+            
+            if (getCurrentCategory() === 'Banking' && job.Bank) {
+                const bankSelect = document.getElementById('selectBankField');
+                for (let i = 0; i < bankSelect.options.length; i++) {
+                    if (bankSelect.options[i].text === job.Bank) {
+                        bankSelect.selectedIndex = i;
+                        break;
+                    }
+                }
+            }
+
             document.getElementById('platform').value = job.Platform || "";
             document.getElementById('jobId').value = job.JobId;
             document.getElementById('jobTitle').value = job.Title || "";
@@ -770,12 +1113,20 @@
             document.getElementById('location').value = job.Location || "";
             document.getElementById('education').value = job.Education || "";
             document.getElementById('experience').value = job.Experience || "";
-            
             document.getElementById('lastDate').value = convertDateToInput(job.LastDate);
-            
             document.getElementById('jobFee').value = (job.ProcessingFee && job.ProcessingFee !== "0") ? job.ProcessingFee : "";
             document.getElementById('challanFee').value = (job.ChallanFee && job.ChallanFee !== "0") ? job.ChallanFee : "";
             document.getElementById('alertMessage').value = job.Alert || "";
+
+            if (job.Researcher && job.Researcher !== currentUserMobile) {
+                document.getElementById('researcherOptionSelect').value = "other";
+                document.getElementById('otherMobileWrapper').classList.remove('hidden');
+                document.getElementById('otherMobileInput').value = job.Researcher;
+            } else {
+                document.getElementById('researcherOptionSelect').value = "myself";
+                document.getElementById('otherMobileWrapper').classList.add('hidden');
+                document.getElementById('otherMobileInput').value = "";
+            }
 
             document.getElementById('editJobId').value = job.JobId;
             document.getElementById('editJobStatus').value = job.Status || "Active";
@@ -788,7 +1139,8 @@
         function deleteJob(jobId) {
             if(confirm(`Permanently remove Job ID ${jobId}?`)) {
                 showProgressBar();
-                database.ref('Jobs/GovtSector/' + jobId).remove().then(() => {
+                const dbPath = getCategoryDBPath() + '/' + jobId;
+                database.ref(dbPath).remove().then(() => {
                     hideProgressBar();
                 });
             }
@@ -798,9 +1150,12 @@
             document.getElementById('jobForm').reset();
             document.getElementById('editJobId').value = "";
             document.getElementById('editJobStatus').value = "";
+            document.getElementById('researcherOptionSelect').value = "myself";
+            document.getElementById('otherMobileWrapper').classList.add('hidden');
             document.getElementById('submitBtn').innerText = "Save Record";
             document.getElementById('cancelEditBtn').classList.add('hidden');
             document.getElementById('duplicateWarning').classList.add('hidden');
+            updateCategoryUI();
             getLatestJobId();
         }
     </script>
